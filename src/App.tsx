@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import axios, { type AxiosResponse } from "axios";
+import exportAllDataToExcel from "./ExportData";
+import type { AxiosResponse } from "axios";
+import axios from "axios";
 
 function App() {
   const [data, setData] = useState<AxiosResponse | null>(null);
@@ -11,7 +13,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
-        "https://pickle.obigo.ai/admin/episode?page=1&size=10",
+        "https://pickle.obigo.ai/admin/episode?episodeName=%EC%9A%B0%EB%A6%AC%EB%8A%94+%EC%99%9C&page=1&size=10",
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -25,9 +27,9 @@ function App() {
     fetchData();
   }, []);
 
-  console.log(data);
+  console.log(data?.data);
 
-  return <div></div>;
+  return <div onClick={() => exportAllDataToExcel()}>다운로드</div>;
 }
 
 export default App;
