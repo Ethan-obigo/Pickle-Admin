@@ -4,6 +4,10 @@ import type { excelProps } from "./type";
 const fileId = import.meta.env.VITE_FILE_ID;
 const sheetName = import.meta.env.VITE_WORKSHEET_NAME;
 
+function formatDateString(dateStr: string) {
+  return dateStr.replace("T", " ").replace(/\.\d+Z$/, "");
+}
+
 export async function getExcelData(token: string): Promise<excelProps[]> {
   try {
     const response = await axios.get(
@@ -13,7 +17,9 @@ export async function getExcelData(token: string): Promise<excelProps[]> {
 
     const values = response.data.values as (string | number)[][];
 
-    return values.map((row) => ({
+    const dataRows = values.slice(3);
+
+    return dataRows.map((row) => ({
       audioUrl: String(row[0] ?? ""),
       episodeNumber: Number(row[1] ?? 0),
       channelName: String(row[2] ?? ""),
@@ -57,8 +63,8 @@ export async function addMissingRows(allData: excelProps[], token: string) {
         row.channelName,
         row.episodeName,
         row.episodeId,
-        row.createdAt,
-        row.dispDtime,
+        formatDateString(row.createdAt),
+        formatDateString(row.dispDtime),
         row.episodeType,
         row.language,
         row.likeCnt,
@@ -67,7 +73,7 @@ export async function addMissingRows(allData: excelProps[], token: string) {
         row.vendorName,
       ]);
 
-      const startRow = existingData.length + i + 1;
+      const startRow = existingData.length + i + 4;
       const endRow = startRow + batch.length - 1;
       const rangeAddress = `A${startRow}:M${endRow}`;
 
