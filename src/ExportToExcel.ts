@@ -1,5 +1,5 @@
 import type { excelProps } from "./type";
-import * as XLSX from "xlsx";
+import * as XLSX from "xlsx-js-style";
 
 function exportToExcel( allData : excelProps[]) {
   const filteredData = allData.map(item => ({
@@ -17,6 +17,23 @@ function exportToExcel( allData : excelProps[]) {
     "담당자": item.manager,
     "비고": item.note,
   }));
+  
+  const headers = [
+    "주차",
+    "큐레이션 위치",
+    "큐레이션명",
+    "태그",
+    "에피소드 순번",
+    "채널명",
+    "에피소드명",
+    "에피소드ID",
+    "시작일",
+    "종료일",
+    "상태",
+    "담당자",
+    "비고",
+  ];
+
   const emptyRows = [{}, {}];
   
   const excelData = [...emptyRows, ...filteredData];
@@ -24,15 +41,13 @@ function exportToExcel( allData : excelProps[]) {
   const worksheet = XLSX.utils.json_to_sheet(excelData, { skipHeader: true });
   XLSX.utils.sheet_add_json(worksheet, [{}], { origin: 0 });
   XLSX.utils.sheet_add_json(worksheet, [{}], { origin: 1 });
-
-  const headers = ["주차", "큐레이션 위치", "큐레이션명", "태그", "에피소드 순번", "채널명", "에피소드명", "에피소드ID", "시작일", "종료일", "상태", "담당자", "비고"];
   XLSX.utils.sheet_add_aoa(worksheet, [headers], { origin: 2 });
   worksheet["!cols"] = [
     { wch: 12 },
-    { wch: 6 },
+    { wch: 12 },
     { wch: 15 },
     { wch: 12 },
-    { wch: 6 },
+    { wch: 12 },
     { wch: 25 },
     { wch: 75 },
     { wch: 10 },
@@ -46,11 +61,35 @@ function exportToExcel( allData : excelProps[]) {
   worksheet["!rows"] = [
     { hpx: 20 },
     { hpx: 20 },
-    { hpx: 50 },
+    { hpx: 35 },
     ...Array(filteredData.length).fill({ hpx: 20 }),
   ];
   
   worksheet["!freeze"] = { xSplit: 0, ySplit: 3 };
+  
+  const range = XLSX.utils.decode_range(worksheet["!ref"] as string);
+  for (let R = 2; R <= range.e.r; ++R) {
+    for (let C = 0; C <= range.e.c; ++C) {
+      const cell_address = { c: C, r: R };
+      const cell_ref = XLSX.utils.encode_cell(cell_address);
+
+      if (!worksheet[cell_ref]) continue;
+      worksheet[cell_ref].s = {
+        alignment: { horizontal: "center", vertical: "center" },
+      }; 
+
+      if (R === 2) {
+        worksheet[cell_ref].s = {
+          alignment: { horizontal: "center", vertical: "center" },
+          fill: {
+            type: "pattern",
+            patternType: "solid",
+            fgColor: { rgb: "DAF2D0" },
+          },
+        };
+      }
+    }
+  }
 
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, "큐레이션 데이터");
