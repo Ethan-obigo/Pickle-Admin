@@ -1,7 +1,7 @@
 import axios from "axios";
 import type { excelProps } from "./type";
 
-const size = 1000;
+const size = 10000;
 
 export async function fetchAllData(): Promise<excelProps[]> {
   const accessToken = import.meta.env.VITE_ACCESS_TOKEN;
@@ -13,7 +13,7 @@ export async function fetchAllData(): Promise<excelProps[]> {
         headers: { Authorization: `Bearer ${accessToken}` },
       }
     );
-
+console.log(firstRes);
     const totalCount = firstRes.data.data.pageInfo.totalCount;
     const totalPages = Math.ceil(totalCount / size);
 
