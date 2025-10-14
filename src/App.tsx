@@ -20,48 +20,62 @@ function App() {
 
   const handleUpdateExcel = async () => {
     if (!token) return alert("로그인을 먼저 해주세요!");
-    const allData = await fetchAllData();
-    await addMissingRows(allData, token);
+    const result = window.confirm("엑셀 파일에 누락된 데이터를 추가합니다.");
+    if (result) {
+      const allData = await fetchAllData();
+      await addMissingRows(allData, token);
+    }
   };
 
   return (
-    <div className="p-10 bg-[#F6F7FA] w-screen h-screen">
-      <button className="border cursor-pointer" onClick={handleLogin}>
-        MS Graph 로그인
-      </button>
-      <button className="border cursor-pointer" onClick={handleUpdateExcel}>
-        전체 에피소드 엑셀로 변환
-      </button>
-      <div className="w-full rounded-2xl bg-white h-[80%] p-8">
-        <h3 className="mb-6">
-          새로운 에피소드 목록 <br /> 총{" "}
-          <span className="font-bold">{newEpi.length}</span>개
-        </h3>
-        <div className="w-full font-bold flex pb-6">
-          <p className="w-[10%]">ID</p>
-          <p className="w-[20%]">에피소드명</p>
-          <p className="w-[15%]">타입</p>
-          <p className="w-[15%]">채널/도서명</p>
-          <p className="w-[10%]">좋아요수</p>
-          <p className="w-[10%]">청취수</p>
-          <p className="w-[15%]">등록일</p>
+    <div className="bg-[#F6F7FA] w-screen h-screen">
+      <div className="w-full h-[10%] flex justify-between items-center mb-4 p-10 bg-white">
+        <h1 className="text-4xl font-bold">PICKLE</h1>
+        <button
+          className="border cursor-pointer bg-[#3c25cc] text-white shadow-[0_2px_0_rgba(72,5,255,0.06)] px-5 py-2 rounded-md hover:bg-[#624ad9] transition-colors duration-100"
+          onClick={handleLogin}
+        >
+          MS Graph 로그인
+        </button>
+      </div>
+      <div className="p-10 h-[80%]">
+        <button
+          className="border cursor-pointer bg-[#3c25cc] mb-4 text-white shadow-[0_2px_0_rgba(72,5,255,0.06)] px-5 py-2 rounded-md hover:bg-[#624ad9] transition-colors duration-100"
+          onClick={handleUpdateExcel}
+        >
+          전체 에피소드 엑셀로 변환
+        </button>
+        <div className="w-full rounded-2xl bg-white h-full p-8">
+          <h3 className="mb-6 text-[#3c25cc] font-semibold">
+            새로운 에피소드 총{" "}
+            <span className="font-extrabold">{newEpi.length}</span>개
+          </h3>
+          <div className="w-full font-bold flex pb-6">
+            <p className="w-[10%]">ID</p>
+            <p className="w-[20%]">에피소드명</p>
+            <p className="w-[15%]">타입</p>
+            <p className="w-[15%]">채널/도서명</p>
+            <p className="w-[10%]">좋아요수</p>
+            <p className="w-[10%]">청취수</p>
+            <p className="w-[15%]">등록일</p>
+          </div>
+          <ul className="w-full h-[75%] min-h-[75%] overflow-scroll">
+            {newEpi.map((epi, idx) => (
+              <li
+                key={idx}
+                className="py-2 w-full flex border-t-2 border-gray-200 cursor-pointer transition-colors duration-150 hover:bg-gray-100"
+              >
+                <p className="w-[10%]">{epi.episodeId}</p>
+                <p className="w-[20%]">{epi.episodeName}</p>
+                <p className="w-[15%]">{epi.episodeType}</p>
+                <p className="w-[15%]">{epi.channelName}</p>
+                <p className="w-[10%]">{epi.likeCnt}</p>
+                <p className="w-[10%]">{epi.playTime}</p>
+                <p className="w-[15%]">{epi.createdAt}</p>
+              </li>
+            ))}
+          </ul>
         </div>
-        <ul className="w-full h-[75%] overflow-scroll">
-          {newEpi.map((epi, idx) => (
-            <li
-              key={idx}
-              className="py-2 w-full flex border-t-2 border-gray-200 cursor-pointer transition-colors duration-150 hover:bg-gray-100"
-            >
-              <p className="w-[10%]">{epi.episodeId}</p>
-              <p className="w-[20%]">{epi.episodeName}</p>
-              <p className="w-[15%]">{epi.episodeType}</p>
-              <p className="w-[15%]">{epi.channelName}</p>
-              <p className="w-[10%]">{epi.likeCnt}</p>
-              <p className="w-[10%]">{epi.playTime}</p>
-              <p className="w-[15%]">{epi.createdAt}</p>
-            </li>
-          ))}
-        </ul>
       </div>
     </div>
   );
