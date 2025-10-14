@@ -2,6 +2,7 @@ import type { excelProps } from "./type";
 import * as XLSX from "xlsx-js-style";
 
 function exportToExcel( allData : excelProps[]) {
+  const normalizeText = (text?: string) => text ? text.normalize("NFC") : "";
   const filteredData = allData.map(item => ({
     "주차": item.week,
     "큐레이션 위치": item.curationSite,
@@ -9,7 +10,7 @@ function exportToExcel( allData : excelProps[]) {
     "태그": item.tag,
     "에피소드 순번": item.episodeNumber,
     "채널명": item.channelName,
-    "에피소드명": item.episodeName,
+    "에피소드명": normalizeText(item.episodeName),
     "에피소드ID": item.episodeId,
     "시작일": item.startDate,
     "종료일": item.endDate,

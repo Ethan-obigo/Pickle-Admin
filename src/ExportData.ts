@@ -3,9 +3,7 @@ import type { excelProps } from "./type";
 import exportToExcel from "./ExportToExcel";
 
 async function exportAllDataToExcel() {
-
-  const accessToken =
-    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdXBlcl9hZG1pbiIsImlhdCI6MTc2MDMzNDIzNSwiZXhwIjoxNzYwNDIwNjM1fQ.iMLMqZLd1AFumXCMNC6cUvUkDt3cdzs-MimNTyrxURs";
+  const accessToken = import.meta.env.VITE_ACCESS_TOKEN;
 
   try {
     const size = 1000;

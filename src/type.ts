@@ -1,9 +1,4 @@
-export interface dataProps {
-  episodeId: number;
-  episodeName: string;
-  channelName: string;
-}
-
+export type ExcelRow = (string | number | null)[];
 export interface excelProps {
   week: string;
   curationSite: number;
