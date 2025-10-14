@@ -11,21 +11,22 @@ export async function getExcelData(token: string): Promise<excelProps[]> {
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    const values: any[][] = response.data.values || [];
+    const values = response.data.values as (string | number)[][];
+
     return values.map((row) => ({
-      week: row[0],
-      curationSite: row[1],
-      curationName: row[2],
-      tag: row[3],
-      episodeNumber: row[4],
-      channelName: row[5],
-      episodeName: row[6],
-      episodeId: row[7],
-      startDate: row[8],
-      endDate: row[9],
-      status: row[10],
-      manager: row[11],
-      note: row[12],
+      audioUrl: String(row[0] ?? ""),
+      episodeNumber: Number(row[1] ?? 0),
+      channelName: String(row[2] ?? ""),
+      episodeName: String(row[3] ?? ""),
+      episodeId: Number(row[4] ?? 0),
+      createdAt: String(row[5] ?? ""),
+      dispDtime: String(row[6] ?? ""),
+      episodeType: String(row[7] ?? ""),
+      language: String(row[8] ?? ""),
+      likeCnt: Number(row[9] ?? 0),
+      playTime: Number(row[10] ?? 0),
+      thumbnailUrl: String(row[11] ?? ""),
+      vendorName: String(row[12] ?? ""),
     }));
   } catch (err) {
     console.error("엑셀 조회 실패:", err);
@@ -51,19 +52,19 @@ export async function addMissingRows(allData: excelProps[], token: string) {
     for (let i = 0; i < missingRows.length; i += batchSize) {
       const batch = missingRows.slice(i, i + batchSize);
       const values = batch.map((row) => [
-        row.week,
-        row.curationSite,
-        row.curationName,
-        row.tag,
+        row.audioUrl,
         row.episodeNumber,
         row.channelName,
         row.episodeName,
         row.episodeId,
-        row.startDate,
-        row.endDate,
-        row.status,
-        row.manager,
-        row.note,
+        row.createdAt,
+        row.dispDtime,
+        row.episodeType,
+        row.language,
+        row.likeCnt,
+        row.playTime,
+        row.thumbnailUrl,
+        row.vendorName,
       ]);
 
       const startRow = existingData.length + i + 1;
