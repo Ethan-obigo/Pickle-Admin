@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getGraphToken } from "./auth";
 import { fetchAllData } from "./fetchAllData";
 import { addMissingRows } from "./updateExcel";
@@ -14,6 +14,13 @@ function App() {
   const [token, setToken] = useState("");
   const [newEpi, setNewEpi] = useState<excelProps[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loginToken = localStorage.getItem("accessToken");
+    if (loginToken) {
+      setToken(loginToken);
+    }
+  }, []);
 
   const handleLogin = async () => {
     const tk = await getGraphToken();
