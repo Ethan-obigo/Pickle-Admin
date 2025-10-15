@@ -8,6 +8,8 @@ import EpisodeList from "./EpisodeList";
 import syncNewEpisodesToExcel from "./syncNewEpisodesToExcel";
 import { toast } from "react-toastify";
 
+let loginToken = localStorage.getItem("accessToken");
+
 function App() {
   const [token, setToken] = useState("");
   const [newEpi, setNewEpi] = useState<excelProps[]>([]);
@@ -17,6 +19,8 @@ function App() {
     const tk = await getGraphToken();
     if (tk) {
       setToken(tk);
+      localStorage.setItem("accessToken", tk);
+      loginToken = localStorage.getItem("accessToken");
       toast.success("로그인에 성공하였습니다.");
       handleSearchNew(tk);
     }
@@ -47,12 +51,14 @@ function App() {
     <div className="bg-[#F6F7FA] w-screen h-screen">
       <div className="w-full h-[10%] flex justify-between items-center mb-0 p-10 bg-white">
         <h1 className="text-4xl font-bold">PICKLE</h1>
-        <button
-          className="border cursor-pointer bg-[#3c25cc] text-white shadow-[0_2px_0_rgba(72,5,255,0.06)] px-5 py-2 rounded-md hover:bg-[#624ad9] transition-colors duration-100"
-          onClick={handleLogin}
-        >
-          MS Graph 로그인
-        </button>
+        {!loginToken && (
+          <button
+            className="border cursor-pointer bg-[#3c25cc] text-white shadow-[0_2px_0_rgba(72,5,255,0.06)] px-5 py-2 rounded-md hover:bg-[#624ad9] transition-colors duration-100"
+            onClick={handleLogin}
+          >
+            MS Graph 로그인
+          </button>
+        )}
       </div>
       <div className="p-10 h-[80%]">
         <div className="flex gap-2">
