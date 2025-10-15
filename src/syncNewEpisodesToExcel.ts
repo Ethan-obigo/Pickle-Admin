@@ -2,6 +2,7 @@ import { getExcelData } from "./updateExcel";
 import type { excelProps } from "./type";
 import axios from "axios";
 import { toast } from "react-toastify";
+import formatDateString from "./formatDateString";
 
 const fileId = import.meta.env.VITE_FILE_ID;
 const sheetName = import.meta.env.VITE_WORKSHEET_NAME;
@@ -44,15 +45,43 @@ async function overwriteExcelData(newEpi: excelProps[], token: string) {
       const batch = updatedData.slice(i, i + batchSize);
       await clearExcelFromRow(i + 4, i + batchSize + 4, token);
       const values = batch.map((row) => {
-        const createdAtDate =
-          typeof row.createdAt === "number"
-            ? excelDateToJSDate(row.createdAt)
-            : new Date(row.createdAt);
+        const createdAtStr = (() => {
+          if (!row.createdAt) return "";
 
-        const dispDtimeDate =
-          typeof row.dispDtime === "number"
-            ? excelDateToJSDate(row.dispDtime)
-            : new Date(row.dispDtime);
+          if (typeof row.createdAt === "number") {
+            return formatDateString(
+              excelDateToJSDate(row.createdAt).toISOString()
+            );
+          }
+
+          if (!isNaN(Number(row.createdAt))) {
+            return formatDateString(
+              excelDateToJSDate(Number(row.createdAt)).toISOString()
+            );
+          }
+
+          const d = new Date(row.createdAt);
+          return isNaN(d.getTime()) ? "" : formatDateString(d.toISOString());
+        })();
+
+        const dispDtimeStr = (() => {
+          if (!row.dispDtime) return "";
+
+          if (typeof row.dispDtime === "number") {
+            return formatDateString(
+              excelDateToJSDate(row.dispDtime).toISOString()
+            );
+          }
+
+          if (!isNaN(Number(row.dispDtime))) {
+            return formatDateString(
+              excelDateToJSDate(Number(row.dispDtime)).toISOString()
+            );
+          }
+
+          const d = new Date(row.dispDtime);
+          return isNaN(d.getTime()) ? "" : formatDateString(d.toISOString());
+        })();
 
         return [
           row.audioUrl,
@@ -60,8 +89,8 @@ async function overwriteExcelData(newEpi: excelProps[], token: string) {
           row.channelName,
           row.episodeName,
           row.episodeId,
-          createdAtDate,
-          dispDtimeDate,
+          createdAtStr,
+          dispDtimeStr,
           row.episodeType,
           row.language,
           row.likeCnt,
