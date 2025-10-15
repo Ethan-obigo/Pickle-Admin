@@ -1,6 +1,9 @@
 module.exports = {
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
-    extend: {},
+    fontFamily: {
+      pre: ["Pretendard"],
+    },
   },
-  plugins: [require('@tailwindcss/line-clamp')],
+  plugins: [require("@tailwindcss/line-clamp")],
 };
