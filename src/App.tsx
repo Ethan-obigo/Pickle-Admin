@@ -30,7 +30,7 @@ function App() {
 
   return (
     <div className="bg-[#F6F7FA] w-screen h-screen">
-      <div className="w-full h-[10%] flex justify-between items-center mb-4 p-10 bg-white">
+      <div className="w-full h-[10%] flex justify-between items-center mb-0 p-10 bg-white">
         <h1 className="text-4xl font-bold">PICKLE</h1>
         <button
           className="border cursor-pointer bg-[#3c25cc] text-white shadow-[0_2px_0_rgba(72,5,255,0.06)] px-5 py-2 rounded-md hover:bg-[#624ad9] transition-colors duration-100"
@@ -40,18 +40,34 @@ function App() {
         </button>
       </div>
       <div className="p-10 h-[80%]">
-        <button
-          className="border cursor-pointer bg-[#3c25cc] mb-4 text-white shadow-[0_2px_0_rgba(72,5,255,0.06)] px-5 py-2 rounded-md hover:bg-[#624ad9] transition-colors duration-100"
-          onClick={handleUpdateExcel}
-        >
-          전체 에피소드 엑셀로 변환
-        </button>
+        <div className="flex gap-2">
+          <button
+            className="border cursor-pointer bg-[#3c25cc] mb-4 text-white shadow-[0_2px_0_rgba(72,5,255,0.06)] px-5 py-2 rounded-md hover:bg-[#624ad9] transition-colors duration-100"
+            onClick={handleUpdateExcel}
+          >
+            전체 에피소드 엑셀로 변환
+          </button>
+          <a
+            href="https://pickle.obigo.ai/admin-web/#/episode-list"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <button className="border cursor-pointer bg-[#3c25cc] mb-4 text-white shadow-[0_2px_0_rgba(72,5,255,0.06)] px-5 py-2 rounded-md hover:bg-[#624ad9] transition-colors duration-100">
+              대시보드 이동
+            </button>
+          </a>
+        </div>
         <div className="w-full rounded-2xl bg-white h-full p-8">
-          <h3 className="mb-6 text-[#3c25cc] font-semibold">
-            새로운 에피소드 총{" "}
-            <span className="font-extrabold">{newEpi.length}</span>개
-          </h3>
-          <div className="w-full font-bold flex pb-6">
+          <div className="flex justify-between">
+            <h3 className="mb-6 text-[#3c25cc] font-semibold">
+              새로운 에피소드 총{" "}
+              <span className="font-extrabold">{newEpi.length}</span>개
+            </h3>
+            <button className="border cursor-pointer bg-[#3c25cc] mb-4 text-white shadow-[0_2px_0_rgba(72,5,255,0.06)] px-5 py-2 rounded-md hover:bg-[#624ad9] transition-colors duration-100">
+              Excel 동기화
+            </button>
+          </div>
+          <div className="w-full font-bold flex py-5 bg-gray-100">
             <p className="w-[10%] px-2">ID</p>
             <p className="w-[20%] px-2">에피소드명</p>
             <p className="w-[15%] px-2">타입</p>

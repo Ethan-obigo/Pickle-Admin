@@ -9,7 +9,7 @@ const EpisodeList = ({ data }: { data: excelProps[] }) => {
   const rowVirtualizer = useVirtualizer({
     count: data.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 48,
+    estimateSize: () => 60,
     overscan: 10,
   });
 
