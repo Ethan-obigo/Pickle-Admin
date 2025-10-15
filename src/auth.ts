@@ -7,7 +7,7 @@ export async function getGraphToken(): Promise<string | null> {
         authority: `https://login.microsoftonline.com/${
           import.meta.env.VITE_TENANT_ID
         }`,
-        redirectUri: "http://localhost:5173",
+        redirectUri: import.meta.env.VITE_REDIRECT_URL,
       },
     };
     const msalInstance = new (
