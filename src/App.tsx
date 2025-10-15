@@ -52,13 +52,13 @@ function App() {
             <span className="font-extrabold">{newEpi.length}</span>개
           </h3>
           <div className="w-full font-bold flex pb-6">
-            <p className="w-[10%]">ID</p>
-            <p className="w-[20%]">에피소드명</p>
-            <p className="w-[15%]">타입</p>
-            <p className="w-[15%]">채널/도서명</p>
-            <p className="w-[10%]">좋아요수</p>
-            <p className="w-[10%]">청취수</p>
-            <p className="w-[15%]">등록일</p>
+            <p className="w-[10%] px-2">ID</p>
+            <p className="w-[20%] px-2">에피소드명</p>
+            <p className="w-[15%] px-2">타입</p>
+            <p className="w-[15%] px-2">채널/도서명</p>
+            <p className="w-[10%] px-2">좋아요수</p>
+            <p className="w-[10%] px-2">청취수</p>
+            <p className="w-[15%] px-2">등록일</p>
           </div>
           <EpisodeList data={newEpi} />
         </div>

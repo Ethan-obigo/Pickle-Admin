@@ -47,6 +47,5 @@ export async function getNewEpisodes(token: string) {
     (item) => new Date(item.createdAt).getTime() > latestTime
   );
 
-  console.log("새로 추가된 데이터:", latestTime, allApiData, newEpisodes);
   return newEpisodes;
 }

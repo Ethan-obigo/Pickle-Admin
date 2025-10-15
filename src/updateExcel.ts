@@ -1,26 +1,9 @@
 import axios from "axios";
 import type { excelProps } from "./type";
+import formatDateString from "./formatDateString";
 
 const fileId = import.meta.env.VITE_FILE_ID;
 const sheetName = import.meta.env.VITE_WORKSHEET_NAME;
-
-function formatDateString(dateStr: string) {
-  if (!dateStr) return "";
-
-  const date = new Date(dateStr);
-  if (isNaN(date.getTime())) return "";
-
-  const korTime = new Date(date.getTime() + 9 * 60 * 60 * 1000);
-
-  const yyyy = korTime.getUTCFullYear();
-  const mm = String(korTime.getUTCMonth() + 1).padStart(2, "0");
-  const dd = String(korTime.getUTCDate()).padStart(2, "0");
-  const hh = String(korTime.getUTCHours()).padStart(2, "0");
-  const min = String(korTime.getUTCMinutes()).padStart(2, "0");
-  const sec = String(korTime.getUTCSeconds()).padStart(2, "0");
-
-  return `${yyyy}-${mm}-${dd} ${hh}:${min}:${sec}`;
-}
 
 export async function getExcelData(token: string): Promise<excelProps[]> {
   try {

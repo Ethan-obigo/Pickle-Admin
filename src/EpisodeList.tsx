@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import type { excelProps } from "./type";
+import formatDateString from "./formatDateString";
 
 const EpisodeList = ({ data }: { data: excelProps[] }) => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -41,7 +42,7 @@ const EpisodeList = ({ data }: { data: excelProps[] }) => {
               <p className="w-[15%] line-clamp-2 px-2">{epi.channelName}</p>
               <p className="w-[10%] px-2">{epi.likeCnt}</p>
               <p className="w-[10%] px-2">{epi.playTime}</p>
-              <p className="w-[15%] px-2">{epi.createdAt}</p>
+              <p className="w-[15%] px-2">{formatDateString(epi.createdAt)}</p>
             </div>
           );
         })}
