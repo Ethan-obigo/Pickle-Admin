@@ -1,6 +1,5 @@
 import { getExcelData } from "./updateExcel";
 import type { excelProps } from "./type";
-import formatDateString from "./formatDateString";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -22,10 +21,16 @@ async function clearExcelFromRow(
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    await delay(500); 
+    await delay(500);
   } catch (err) {
     console.error("엑셀 삭제 실패:", err);
   }
+}
+
+function excelDateToJSDate(serial: number): Date {
+  const excelEpoch = new Date(1899, 11, 30);
+  const millisPerDay = 24 * 60 * 60 * 1000;
+  return new Date(excelEpoch.getTime() + serial * millisPerDay);
 }
 
 async function overwriteExcelData(newEpi: excelProps[], token: string) {
@@ -38,26 +43,38 @@ async function overwriteExcelData(newEpi: excelProps[], token: string) {
     for (let i = 0; i < updatedData.length; i += batchSize) {
       const batch = updatedData.slice(i, i + batchSize);
       await clearExcelFromRow(i + 4, i + batchSize + 4, token);
-      const values = batch.map((row) => [
-        row.audioUrl,
-        row.episodeNumber,
-        row.channelName,
-        row.episodeName,
-        row.episodeId,
-        formatDateString(row.createdAt),
-        formatDateString(row.dispDtime),
-        row.episodeType,
-        row.language,
-        row.likeCnt,
-        row.playTime,
-        row.thumbnailUrl,
-        row.vendorName,
-      ]);
+      const values = batch.map((row) => {
+        const createdAtDate =
+          typeof row.createdAt === "number"
+            ? excelDateToJSDate(row.createdAt)
+            : new Date(row.createdAt);
+
+        const dispDtimeDate =
+          typeof row.dispDtime === "number"
+            ? excelDateToJSDate(row.dispDtime)
+            : new Date(row.dispDtime);
+
+        return [
+          row.audioUrl,
+          row.episodeNumber,
+          row.channelName,
+          row.episodeName,
+          row.episodeId,
+          createdAtDate,
+          dispDtimeDate,
+          row.episodeType,
+          row.language,
+          row.likeCnt,
+          row.playTime,
+          row.thumbnailUrl,
+          row.vendorName,
+        ];
+      });
 
       const startRow = i + 4;
       const endRow = startRow + batch.length - 1;
       const rangeAddress = `A${startRow}:M${endRow}`;
-      
+
       await axios.patch(
         `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/range(address='${rangeAddress}')`,
         { values },

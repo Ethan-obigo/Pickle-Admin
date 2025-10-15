@@ -18,10 +18,7 @@ function App() {
     if (tk) {
       setToken(tk);
       toast.success("로그인에 성공하였습니다.");
-      setLoading(true);
-      const newList = await getNewEpisodes(tk);
-      setNewEpi(newList);
-      setLoading(false);
+      handleSearchNew(tk);
     }
   };
 
@@ -37,6 +34,13 @@ function App() {
   const handleSyncExcel = async () => {
     if (!token) return toast.warn("로그인을 먼저 해주세요!");
     await syncNewEpisodesToExcel(newEpi, token);
+  };
+
+  const handleSearchNew = async (token: string) => {
+      setLoading(true);
+      const newList = await getNewEpisodes(token);
+      setNewEpi(newList);
+      setLoading(false);
   };
 
   return (
@@ -69,17 +73,22 @@ function App() {
           </a>
         </div>
         <div className="w-full rounded-2xl bg-white h-full p-8">
-          <div className="flex justify-between">
+          <div className="flex justify-between items-center h-[10%]">
             <h3 className="mb-6 text-[#3c25cc] font-semibold">
               새로운 에피소드 총{" "}
               <span className="font-extrabold">{newEpi.length}</span>개
             </h3>
-            <button
-              onClick={handleSyncExcel}
-              className="border cursor-pointer bg-[#3c25cc] mb-4 text-white shadow-[0_2px_0_rgba(72,5,255,0.06)] px-5 py-2 rounded-md hover:bg-[#624ad9] transition-colors duration-100"
-            >
-              Excel 동기화
-            </button>
+            <div className="flex gap-8 items-center">
+              <button onClick={() => handleSearchNew(token)} className="mb-3 cursor-pointer">
+                <img src="/redo.svg" alt="재검색" width={22} height={22} />
+              </button>
+              <button
+                onClick={handleSyncExcel}
+                className="border cursor-pointer bg-[#3c25cc] mb-4 text-white shadow-[0_2px_0_rgba(72,5,255,0.06)] px-5 py-2 rounded-md hover:bg-[#624ad9] transition-colors duration-100"
+              >
+                Excel 동기화
+              </button>
+            </div>
           </div>
           <div className="w-full font-bold flex py-5 bg-gray-100">
             <p className="w-[10%] px-2">ID</p>
@@ -93,7 +102,11 @@ function App() {
 
           {loading && (
             <div className="flex flex-col gap-4 items-center justify-center h-[70%] box-border bg-black/30">
-              <p className="text-white text-center font-bold">새로운 에피소드 목록을 불러오는 중입니다.<br />잠시만 기다려주세요!</p>
+              <p className="text-white text-center font-bold">
+                새로운 에피소드 목록을 불러오는 중입니다.
+                <br />
+                잠시만 기다려주세요!
+              </p>
               <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
             </div>
           )}
