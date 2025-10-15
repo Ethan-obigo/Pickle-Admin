@@ -57,7 +57,10 @@ function App() {
   return (
     <div className="bg-[#F6F7FA] w-screen h-screen">
       <div className="w-full h-[10%] flex justify-between items-center mb-0 p-10 bg-white">
-        <h1 className="text-4xl font-bold">PICKLE</h1>
+        <h1 className="text-4xl font-bold flex gap-4">
+          <img src="/logo.svg" alt="로고" width={40} height={40} />
+          PICKLE
+        </h1>
         {!loginToken && (
           <button
             className="border cursor-pointer bg-[#3c25cc] text-white shadow-[0_2px_0_rgba(72,5,255,0.06)] px-5 py-2 rounded-md hover:bg-[#624ad9] transition-colors duration-100"
