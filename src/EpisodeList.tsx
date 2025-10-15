@@ -38,20 +38,23 @@ const EpisodeList = ({ data }: { data: excelProps[] }) => {
                 }}
               >
                 <p className="w-[10%] px-2">{epi.episodeId}</p>
-                <p className="w-[20%] line-clamp-2 px-2">{epi.episodeName}</p>
-                <p className="w-[15%] px-2">{epi.episodeType}</p>
+                <p className="w-[10%] px-2">{epi.usageYn}</p>
                 <p className="w-[15%] line-clamp-2 px-2">{epi.channelName}</p>
-                <p className="w-[10%] px-2">{epi.likeCnt}</p>
-                <p className="w-[10%] px-2">{epi.playTime}</p>
+                <p className="w-[15%] line-clamp-2 px-2">{epi.episodeName}</p>
                 <p className="w-[15%] px-2">
                   {formatDateString(epi.createdAt)}
                 </p>
+                <p className="w-[10%] px-2">{epi.likeCnt}</p>
+                <p className="w-[10%] px-2">{epi.listenCnt}</p>
+                <p className="w-[15%] px-2">{epi.audioUrl}</p>
               </div>
             );
           })}
         </div>
       ) : (
-        <div className="w-full h-full flex justify-center items-center">새로 등록된 에피소드가 존재하지 않습니다.</div>
+        <div className="w-full h-full flex justify-center items-center">
+          새로 등록된 에피소드가 존재하지 않습니다.
+        </div>
       )}
     </div>
   );

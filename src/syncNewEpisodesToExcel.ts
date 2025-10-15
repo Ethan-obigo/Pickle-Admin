@@ -18,7 +18,7 @@ async function clearExcelFromRow(
 ) {
   try {
     await axios.post(
-      `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/range(address='A${startRow}:M${endRow}')/clear`,
+      `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/range(address='A${startRow}:X${endRow}')/clear`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -34,6 +34,23 @@ function excelDateToJSDate(serial: number): Date {
   return new Date(excelEpoch.getTime() + serial * millisPerDay);
 }
 
+function excelDateTime(date: string | number) {
+  if (!date) return "";
+
+  if (typeof date === "number") {
+    return formatDateString(excelDateToJSDate(date).toISOString());
+  }
+
+  if (!isNaN(Number(date))) {
+    return formatDateString(
+      excelDateToJSDate(Number(date)).toISOString()
+    );
+  }
+
+  const d = new Date(date);
+  return isNaN(d.getTime()) ? "" : formatDateString(d.toISOString());
+}
+
 async function overwriteExcelData(newEpi: excelProps[], token: string) {
   const existingData = await getExcelData(token);
   const updatedData = [...newEpi, ...existingData];
@@ -45,64 +62,42 @@ async function overwriteExcelData(newEpi: excelProps[], token: string) {
       const batch = updatedData.slice(i, i + batchSize);
       await clearExcelFromRow(i + 4, i + batchSize + 4, token);
       const values = batch.map((row) => {
-        const createdAtStr = (() => {
-          if (!row.createdAt) return "";
-
-          if (typeof row.createdAt === "number") {
-            return formatDateString(
-              excelDateToJSDate(row.createdAt).toISOString()
-            );
-          }
-
-          if (!isNaN(Number(row.createdAt))) {
-            return formatDateString(
-              excelDateToJSDate(Number(row.createdAt)).toISOString()
-            );
-          }
-
-          const d = new Date(row.createdAt);
-          return isNaN(d.getTime()) ? "" : formatDateString(d.toISOString());
-        })();
-
-        const dispDtimeStr = (() => {
-          if (!row.dispDtime) return "";
-
-          if (typeof row.dispDtime === "number") {
-            return formatDateString(
-              excelDateToJSDate(row.dispDtime).toISOString()
-            );
-          }
-
-          if (!isNaN(Number(row.dispDtime))) {
-            return formatDateString(
-              excelDateToJSDate(Number(row.dispDtime)).toISOString()
-            );
-          }
-
-          const d = new Date(row.dispDtime);
-          return isNaN(d.getTime()) ? "" : formatDateString(d.toISOString());
-        })();
+        const createdAtStr = excelDateTime(row.createdAt);
+        const dispDtimeStr = excelDateTime(row.dispDtime);
+        const lastUpdateDtimeStr = excelDateTime(row.lastUpdateDtime);
+        const modifiedAtStr = excelDateTime(row.modifiedAt);
 
         return [
-          row.audioUrl,
+          row.episodeId,
+          row.usageYn,
+          row.channelId,
           row.episodeNumber,
           row.channelName,
           row.episodeName,
-          row.episodeId,
+          row.creatorSeq,
           createdAtStr,
           dispDtimeStr,
           row.episodeType,
+          row.guests,
           row.language,
+          lastUpdateDtimeStr,
           row.likeCnt,
+          row.listenCnt,
+          modifiedAtStr,
+          row.modifierSeq,
           row.playTime,
+          row.playlists,
+          row.tags,
+          row.tagsAdded,
           row.thumbnailUrl,
+          row.audioUrl,
           row.vendorName,
         ];
       });
 
       const startRow = i + 4;
       const endRow = startRow + batch.length - 1;
-      const rangeAddress = `A${startRow}:M${endRow}`;
+      const rangeAddress = `A${startRow}:X${endRow}`;
 
       await axios.patch(
         `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/range(address='${rangeAddress}')`,

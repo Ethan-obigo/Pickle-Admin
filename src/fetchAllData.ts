@@ -13,7 +13,7 @@ export async function fetchAllData(): Promise<excelProps[]> {
         headers: { Authorization: `Bearer ${accessToken}` },
       }
     );
-console.log(firstRes);
+
     const totalCount = firstRes.data.data.pageInfo.totalCount;
     const totalPages = Math.ceil(totalCount / size);
 

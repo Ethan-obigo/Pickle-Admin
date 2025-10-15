@@ -16,19 +16,30 @@ export async function getExcelData(token: string): Promise<excelProps[]> {
     const dataRows = values.slice(0);
 
     return dataRows.map((row) => ({
-      audioUrl: String(row[0] ?? ""),
-      episodeNumber: Number(row[1] ?? 0),
-      channelName: String(row[2] ?? ""),
-      episodeName: String(row[3] ?? ""),
-      episodeId: Number(row[4] ?? 0),
-      createdAt: String(row[5] ?? ""),
-      dispDtime: String(row[6] ?? ""),
-      episodeType: String(row[7] ?? ""),
-      language: String(row[8] ?? ""),
-      likeCnt: Number(row[9] ?? 0),
-      playTime: Number(row[10] ?? 0),
-      thumbnailUrl: String(row[11] ?? ""),
-      vendorName: String(row[12] ?? ""),
+      episodeId: Number(row[0] ?? 0),
+      usageYn: String(row[1] ?? ""),
+      channelId:Number(row[2] ?? 0),
+      episodeNumber: Number(row[3] ?? 0),
+      channelName: String(row[4] ?? ""),
+      episodeName: String(row[5] ?? ""),
+      creatorSeq: Number(row[6] ?? 0),
+      createdAt: String(row[7] ?? ""),
+      dispDtime: String(row[8] ?? ""),
+      episodeType: String(row[9] ?? ""),
+      guests: String(row[10] ?? ""),
+      language: String(row[11] ?? ""),
+      lastUpdateDtime: String(row[12] ?? ""),
+      likeCnt: Number(row[13] ?? 0),
+      listenCnt: Number(row[14] ?? 0),
+      modifiedAt: String(row[15] ?? ""),
+      modifierSeq: Number(row[16] ?? 0),
+      playTime: Number(row[17] ?? 0),
+      playlists: String(row[18] ?? ""),
+      tags: String(row[19] ?? ""),
+      tagsAdded: String(row[20] ?? ""),
+      thumbnailUrl: String(row[21] ?? ""),
+      audioUrl: String(row[22] ?? ""),
+      vendorName: String(row[23] ?? ""),
     }));
   } catch (err) {
     console.error("엑셀 조회 실패:", err);
@@ -54,24 +65,35 @@ export async function addMissingRows(allData: excelProps[], token: string) {
     for (let i = 0; i < missingRows.length; i += batchSize) {
       const batch = missingRows.slice(i, i + batchSize);
       const values = batch.map((row) => [
-        row.audioUrl,
+        row.episodeId,
+        row.usageYn,
+        row.channelId,
         row.episodeNumber,
         row.channelName,
         row.episodeName,
-        row.episodeId,
+        row.creatorSeq,
         formatDateString(row.createdAt),
         formatDateString(row.dispDtime),
         row.episodeType,
+        row.guests,
         row.language,
+        formatDateString(row.lastUpdateDtime),
         row.likeCnt,
+        row.listenCnt,
+        formatDateString(row.modifiedAt),
+        row.modifierSeq,
         row.playTime,
+        row.playlists,
+        row.tags,
+        row.tagsAdded,
         row.thumbnailUrl,
+        row.audioUrl,
         row.vendorName,
       ]);
 
       const startRow = existingData.length + i + 3;
       const endRow = startRow + batch.length - 1;
-      const rangeAddress = `A${startRow}:M${endRow}`;
+      const rangeAddress = `A${startRow}:X${endRow}`;
 
       await axios.patch(
         `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/range(address='${rangeAddress}')`,

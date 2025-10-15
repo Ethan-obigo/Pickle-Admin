@@ -37,10 +37,10 @@ function App() {
   };
 
   const handleSearchNew = async (token: string) => {
-      setLoading(true);
-      const newList = await getNewEpisodes(token);
-      setNewEpi(newList);
-      setLoading(false);
+    setLoading(true);
+    const newList = await getNewEpisodes(token);
+    setNewEpi(newList);
+    setLoading(false);
   };
 
   return (
@@ -79,7 +79,10 @@ function App() {
               <span className="font-extrabold">{newEpi.length}</span>개
             </h3>
             <div className="flex gap-8 items-center">
-              <button onClick={() => handleSearchNew(token)} className="mb-3 cursor-pointer">
+              <button
+                onClick={() => handleSearchNew(token)}
+                className="mb-3 cursor-pointer"
+              >
                 <img src="/redo.svg" alt="재검색" width={22} height={22} />
               </button>
               <button
@@ -90,27 +93,30 @@ function App() {
               </button>
             </div>
           </div>
-          <div className="w-full font-bold flex py-5 bg-gray-100">
-            <p className="w-[10%] px-2">ID</p>
-            <p className="w-[20%] px-2">에피소드명</p>
-            <p className="w-[15%] px-2">타입</p>
-            <p className="w-[15%] px-2">채널/도서명</p>
-            <p className="w-[10%] px-2">좋아요수</p>
-            <p className="w-[10%] px-2">청취수</p>
-            <p className="w-[15%] px-2">등록일</p>
-          </div>
-
-          {loading && (
-            <div className="flex flex-col gap-4 items-center justify-center h-[70%] box-border bg-black/30">
-              <p className="text-white text-center font-bold">
-                새로운 에피소드 목록을 불러오는 중입니다.
-                <br />
-                잠시만 기다려주세요!
-              </p>
-              <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-full h-[90%]">
+            <div className="min-w-max flex font-bold py-5">
+              <p className="w-[10%] px-2">ID</p>
+              <p className="w-[10%] px-2">활성화</p>
+              <p className="w-[15%] px-2">채널명</p>
+              <p className="w-[15%] px-2">에피소드명</p>
+              <p className="w-[15%] px-2">등록일</p>
+              <p className="w-[10%] px-2">좋아요수</p>
+              <p className="w-[10%] px-2">청취수</p>
+              <p className="w-[15%] px-2">오디오 URL</p>
             </div>
-          )}
-          {!loading && <EpisodeList data={newEpi} />}
+
+            {loading && (
+              <div className="flex flex-col gap-4 items-center justify-center h-[70%] box-border bg-black/30">
+                <p className="text-white text-center font-bold">
+                  새로운 에피소드 목록을 불러오는 중입니다.
+                  <br />
+                  잠시만 기다려주세요!
+                </p>
+                <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
+            {!loading && <EpisodeList data={newEpi} />}
+          </div>
         </div>
       </div>
     </div>
