@@ -5,17 +5,21 @@ import { addMissingRows } from "./updateExcel";
 import { getNewEpisodes } from "./getNewEpisodes";
 import type { excelProps } from "./type";
 import EpisodeList from "./EpisodeList";
+import syncNewEpisodesToExcel from "./syncNewEpisodesToExcel";
 
 function App() {
   const [token, setToken] = useState("");
   const [newEpi, setNewEpi] = useState<excelProps[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     const tk = await getGraphToken();
     if (tk) {
       setToken(tk);
+      setLoading(true);
       const newList = await getNewEpisodes(tk);
       setNewEpi(newList);
+      setLoading(false);
     }
   };
 
@@ -26,6 +30,11 @@ function App() {
       const allData = await fetchAllData();
       await addMissingRows(allData, token);
     }
+  };
+
+  const handleSyncExcel = async () => {
+    if (!token) return alert("로그인을 먼저 해주세요!");
+    await syncNewEpisodesToExcel(newEpi, token);
   };
 
   return (
@@ -63,7 +72,10 @@ function App() {
               새로운 에피소드 총{" "}
               <span className="font-extrabold">{newEpi.length}</span>개
             </h3>
-            <button className="border cursor-pointer bg-[#3c25cc] mb-4 text-white shadow-[0_2px_0_rgba(72,5,255,0.06)] px-5 py-2 rounded-md hover:bg-[#624ad9] transition-colors duration-100">
+            <button
+              onClick={handleSyncExcel}
+              className="border cursor-pointer bg-[#3c25cc] mb-4 text-white shadow-[0_2px_0_rgba(72,5,255,0.06)] px-5 py-2 rounded-md hover:bg-[#624ad9] transition-colors duration-100"
+            >
               Excel 동기화
             </button>
           </div>
@@ -76,7 +88,14 @@ function App() {
             <p className="w-[10%] px-2">청취수</p>
             <p className="w-[15%] px-2">등록일</p>
           </div>
-          <EpisodeList data={newEpi} />
+
+          {loading && (
+            <div className="flex flex-col gap-4 items-center justify-center h-[70%] box-border bg-black/30">
+              <p className="text-white text-center font-bold">새로운 에피소드 목록을 불러오는 중입니다.<br />잠시만 기다려주세요!</p>
+              <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
+          {!loading && <EpisodeList data={newEpi} />}
         </div>
       </div>
     </div>
