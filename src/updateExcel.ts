@@ -69,7 +69,7 @@ export async function addMissingRows(allData: excelProps[], token: string) {
         row.vendorName,
       ]);
 
-      const startRow = existingData.length + i + 4;
+      const startRow = existingData.length + i + 3;
       const endRow = startRow + batch.length - 1;
       const rangeAddress = `A${startRow}:M${endRow}`;
 
@@ -83,11 +83,7 @@ export async function addMissingRows(allData: excelProps[], token: string) {
           },
         }
       );
-
-      console.log(`배치 ${i / batchSize + 1}: ${batch.length}행 추가 완료`);
     }
-
-    console.log(`총 누락 데이터 ${missingRows.length}행 추가 완료`);
   } catch (err) {
     console.error("엑셀 업데이트 실패:", err);
   }

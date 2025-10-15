@@ -6,6 +6,7 @@ import { getNewEpisodes } from "./getNewEpisodes";
 import type { excelProps } from "./type";
 import EpisodeList from "./EpisodeList";
 import syncNewEpisodesToExcel from "./syncNewEpisodesToExcel";
+import { toast } from "react-toastify";
 
 function App() {
   const [token, setToken] = useState("");
@@ -16,6 +17,7 @@ function App() {
     const tk = await getGraphToken();
     if (tk) {
       setToken(tk);
+      toast.success("로그인에 성공하였습니다.");
       setLoading(true);
       const newList = await getNewEpisodes(tk);
       setNewEpi(newList);
@@ -24,7 +26,7 @@ function App() {
   };
 
   const handleUpdateExcel = async () => {
-    if (!token) return alert("로그인을 먼저 해주세요!");
+    if (!token) return toast.warn("로그인을 먼저 해주세요!");
     const result = window.confirm("엑셀 파일에 누락된 데이터를 추가합니다.");
     if (result) {
       const allData = await fetchAllData();
@@ -33,7 +35,7 @@ function App() {
   };
 
   const handleSyncExcel = async () => {
-    if (!token) return alert("로그인을 먼저 해주세요!");
+    if (!token) return toast.warn("로그인을 먼저 해주세요!");
     await syncNewEpisodesToExcel(newEpi, token);
   };
 
