@@ -4,6 +4,7 @@ import { fetchAllData } from "./fetchAllData";
 import { addMissingRows } from "./updateExcel";
 import { getNewEpisodes } from "./getNewEpisodes";
 import type { excelProps } from "./type";
+import EpisodeList from "./EpisodeList";
 
 function App() {
   const [token, setToken] = useState("");
@@ -59,22 +60,7 @@ function App() {
             <p className="w-[10%]">청취수</p>
             <p className="w-[15%]">등록일</p>
           </div>
-          <ul className="w-full h-[75%] min-h-[75%] overflow-scroll">
-            {newEpi.map((epi, idx) => (
-              <li
-                key={idx}
-                className="py-2 w-full flex border-t-2 border-gray-200 cursor-pointer transition-colors duration-150 hover:bg-gray-100"
-              >
-                <p className="w-[10%]">{epi.episodeId}</p>
-                <p className="w-[20%]">{epi.episodeName}</p>
-                <p className="w-[15%]">{epi.episodeType}</p>
-                <p className="w-[15%]">{epi.channelName}</p>
-                <p className="w-[10%]">{epi.likeCnt}</p>
-                <p className="w-[10%]">{epi.playTime}</p>
-                <p className="w-[15%]">{epi.createdAt}</p>
-              </li>
-            ))}
-          </ul>
+          <EpisodeList data={newEpi} />
         </div>
       </div>
     </div>
