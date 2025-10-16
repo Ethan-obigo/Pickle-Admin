@@ -3,41 +3,57 @@ import { getGraphToken } from "./auth";
 import { fetchAllData } from "./fetchAllData";
 import { addMissingRows } from "./updateExcel";
 import { getNewEpisodes } from "./getNewEpisodes";
-import type { excelProps } from "./type";
+import type { excelProps, LoginResponseData } from "./type";
 import EpisodeList from "./EpisodeList";
 import syncNewEpisodesToExcel from "./syncNewEpisodesToExcel";
 import { toast } from "react-toastify";
+import LoginPopup from "./Login";
 
-let loginToken = localStorage.getItem("accessToken");
+let loginToken = localStorage.getItem("loginToken");
+let accessTk = localStorage.getItem("accessToken");
 
 function App() {
   const [token, setToken] = useState("");
+  const [accessToken, setAccessToken] = useState("");
   const [newEpi, setNewEpi] = useState<excelProps[]>([]);
   const [loading, setLoading] = useState(false);
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
 
   useEffect(() => {
-    loginToken = localStorage.getItem("accessToken");
+    loginToken = localStorage.getItem("loginToken");
+    accessTk = localStorage.getItem("accessToken");
+    if (accessTk) {
+      setAccessToken(accessTk);
+    }
     if (loginToken) {
       setToken(loginToken);
     }
   }, []);
 
   const handleLogin = async () => {
+    if (!accessToken) return toast.warn("관리자 로그인을 먼저 해주세요!");
     const tk = await getGraphToken();
     if (tk) {
       setToken(tk);
-      localStorage.setItem("accessToken", tk);
-      loginToken = localStorage.getItem("accessToken");
-      toast.success("로그인에 성공하였습니다.");
-      handleSearchNew(tk);
+      localStorage.setItem("loginToken", tk);
+      loginToken = localStorage.getItem("loginToken");
+      toast.success("MS 로그인에 성공하였습니다.");
+      handleSearchNew(tk, accessToken);
     }
+  };
+
+  const handlePopupLoginSuccess = (data: LoginResponseData) => {
+    setAccessToken(data.accessToken);
+    localStorage.setItem("accessToken", data.accessToken);
+    localStorage.setItem("refreshToken", data.refreshToken);
+    toast.success("관리자 로그인에 성공했습니다!");
   };
 
   const handleUpdateExcel = async () => {
     if (!token) return toast.warn("로그인을 먼저 해주세요!");
     const result = window.confirm("엑셀 파일에 누락된 데이터를 추가합니다.");
     if (result) {
-      const allData = await fetchAllData();
+      const allData = await fetchAllData(accessToken);
       await addMissingRows(allData, token);
     }
   };
@@ -47,9 +63,9 @@ function App() {
     await syncNewEpisodesToExcel(newEpi, token);
   };
 
-  const handleSearchNew = async (token: string) => {
+  const handleSearchNew = async (token: string, accessToken: string) => {
     setLoading(true);
-    const newList = await getNewEpisodes(token);
+    const newList = await getNewEpisodes(token, accessToken);
     setNewEpi(newList);
     setLoading(false);
   };
@@ -61,14 +77,24 @@ function App() {
           <img src="/logo.svg" alt="로고" width={40} height={40} />
           PICKLE
         </h1>
-        {!loginToken && (
-          <button
-            className="border cursor-pointer bg-[#3c25cc] text-white shadow-[0_2px_0_rgba(72,5,255,0.06)] px-5 py-2 rounded-md hover:bg-[#624ad9] transition-colors duration-100"
-            onClick={handleLogin}
-          >
-            MS Graph 로그인
-          </button>
-        )}
+        <div className="flex gap-4">
+          {!accessToken && (
+            <button
+              className="border cursor-pointer bg-[#3c25cc] text-white shadow-[0_2px_0_rgba(72,5,255,0.06)] px-5 py-2 rounded-md hover:bg-[#624ad9] transition-colors duration-100"
+              onClick={() => setShowLoginPopup(true)}
+            >
+              관리자 로그인
+            </button>
+          )}
+          {!token && (
+            <button
+              className="border cursor-pointer bg-[#3c25cc] text-white shadow-[0_2px_0_rgba(72,5,255,0.06)] px-5 py-2 rounded-md hover:bg-[#624ad9] transition-colors duration-100"
+              onClick={handleLogin}
+            >
+              MS Graph 로그인
+            </button>
+          )}
+        </div>
       </div>
       <div className="p-10 h-[80%]">
         <div className="flex gap-2">
@@ -96,7 +122,7 @@ function App() {
             </h3>
             <div className="flex gap-8 items-center">
               <button
-                onClick={() => handleSearchNew(token)}
+                onClick={() => handleSearchNew(token, accessToken)}
                 className="mb-3 cursor-pointer"
               >
                 <img src="/redo.svg" alt="재검색" width={22} height={22} />
@@ -135,6 +161,12 @@ function App() {
           </div>
         </div>
       </div>
+      {showLoginPopup && (
+        <LoginPopup
+          onClose={() => setShowLoginPopup(false)}
+          onLoginSuccess={handlePopupLoginSuccess}
+        />
+      )}
     </div>
   );
 }

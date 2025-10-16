@@ -25,3 +25,11 @@ export interface excelProps {
   usageYn: string;
   vendorName: string;
 }
+export interface LoginResponseData {
+  adminSeq: number;
+  email: string;
+  adminName: string;
+  roleId: string;
+  accessToken: string;
+  refreshToken: string;
+}

@@ -3,9 +3,7 @@ import type { excelProps } from "./type";
 
 const size = 10000;
 
-export async function fetchAllData(): Promise<excelProps[]> {
-  const accessToken = import.meta.env.VITE_ACCESS_TOKEN;
-
+export async function fetchAllData(accessToken: string): Promise<excelProps[]> {
   try {
     const firstRes = await axios.get(
       `https://pickle.obigo.ai/admin/episode?page=1&size=${size}`,

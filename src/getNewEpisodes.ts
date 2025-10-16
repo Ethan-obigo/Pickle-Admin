@@ -8,14 +8,13 @@ function excelDateToJSDate(serial: number): Date {
   return new Date(excelEpoch.getTime() + serial * millisPerDay);
 }
 
-export async function getNewEpisodes(token: string) {
+export async function getNewEpisodes(token: string, accessToken: string) {
   const excelData = await getExcelData(token);
   if (excelData.length === 0) return [];
 
   const latestDateInExcel = excelDateToJSDate(Number(excelData[0].createdAt));
   const latestTime = latestDateInExcel.getTime();
 
-  const accessToken = import.meta.env.VITE_ACCESS_TOKEN;
   const size = 1000;
   const firstRes = await axios.get(
     `https://pickle.obigo.ai/admin/episode?page=1&size=${size}`,

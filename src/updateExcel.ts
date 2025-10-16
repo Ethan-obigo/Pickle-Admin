@@ -8,7 +8,7 @@ const sheetName = import.meta.env.VITE_WORKSHEET_NAME;
 export async function getExcelData(token: string): Promise<excelProps[]> {
   try {
     const response = await axios.get(
-      `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/usedRange(valuesOnly=true)`,
+      `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/usedRange?valuesOnly=true`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
