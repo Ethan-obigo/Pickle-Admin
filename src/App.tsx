@@ -3,7 +3,7 @@ import { getGraphToken } from "./auth";
 import { fetchAllData } from "./fetchAllData";
 import { addMissingRows } from "./updateExcel";
 import { getNewEpisodes } from "./getNewEpisodes";
-import type { excelProps, LoginResponseData } from "./type";
+import type { LoginResponseData, usingDataProps } from "./type";
 import EpisodeList from "./EpisodeList";
 import syncNewEpisodesToExcel from "./syncNewEpisodesToExcel";
 import { toast } from "react-toastify";
@@ -15,7 +15,7 @@ let accessTk = localStorage.getItem("accessToken");
 function App() {
   const [token, setToken] = useState("");
   const [accessToken, setAccessToken] = useState("");
-  const [newEpi, setNewEpi] = useState<excelProps[]>([]);
+  const [newEpi, setNewEpi] = useState<usingDataProps[]>([]);
   const [loading, setLoading] = useState(false);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
 
@@ -137,14 +137,17 @@ function App() {
           </div>
           <div className="w-full h-[90%]">
             <div className="min-w-max flex font-bold py-5">
-              <p className="w-[10%] px-2">ID</p>
-              <p className="w-[10%] px-2">활성화</p>
-              <p className="w-[15%] px-2">채널명</p>
-              <p className="w-[15%] px-2">에피소드명</p>
-              <p className="w-[15%] px-2">등록일</p>
-              <p className="w-[10%] px-2">좋아요수</p>
-              <p className="w-[10%] px-2">청취수</p>
-              <p className="w-[15%] px-2">오디오 URL</p>
+              <p className="w-[7%] px-2">ID</p>
+              <p className="w-[7%] px-2">활성화</p>
+              <p className="w-[12%] px-2">채널명</p>
+              <p className="w-[13%] px-2">에피소드명</p>
+              <p className="w-[12%] px-2">게시일</p>
+              <p className="w-[12%] px-2">등록일</p>
+              <p className="w-[9%] px-2">에피소드 시간</p>
+              <p className="w-[7%] px-2">좋아요수</p>
+              <p className="w-[7%] px-2">청취수</p>
+              <p className="w-[7%] px-2">tags</p>
+              <p className="w-[7%] px-2">tagsadded</p>
             </div>
 
             {loading && (

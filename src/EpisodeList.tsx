@@ -1,9 +1,9 @@
 import { useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import type { excelProps } from "./type";
+import type { usingDataProps } from "./type";
 import formatDateString from "./formatDateString";
 
-const EpisodeList = ({ data }: { data: excelProps[] }) => {
+const EpisodeList = ({ data }: { data: usingDataProps[] }) => {
   const parentRef = useRef<HTMLDivElement>(null);
 
   const rowVirtualizer = useVirtualizer({
@@ -37,16 +37,21 @@ const EpisodeList = ({ data }: { data: excelProps[] }) => {
                   height: `${virtualRow.size}px`,
                 }}
               >
-                <p className="w-[10%] px-2">{epi.episodeId}</p>
-                <p className="w-[10%] px-2">{epi.usageYn}</p>
-                <p className="w-[15%] line-clamp-2 px-2">{epi.channelName}</p>
-                <p className="w-[15%] line-clamp-2 px-2">{epi.episodeName}</p>
-                <p className="w-[15%] px-2">
+                <p className="w-[7%] px-2">{epi.episodeId}</p>
+                <p className="w-[7%] px-2">{epi.usageYn}</p>
+                <p className="w-[12%] line-clamp-2 px-2">{epi.channelName}</p>
+                <p className="w-[13%] line-clamp-2 px-2">{epi.episodeName}</p>
+                <p className="w-[12%] px-2">
+                  {formatDateString(epi.dispDtime)}
+                </p>
+                <p className="w-[12%] px-2">
                   {formatDateString(epi.createdAt)}
                 </p>
-                <p className="w-[10%] px-2">{epi.likeCnt}</p>
-                <p className="w-[10%] px-2">{epi.listenCnt}</p>
-                <p className="w-[15%] px-2">{epi.audioUrl}</p>
+                <p className="w-[9%] px-2">{epi.playTime}</p>
+                <p className="w-[7%] px-2">{epi.likeCnt}</p>
+                <p className="w-[7%] px-2">{epi.listenCnt}</p>
+                <p className="w-[7%] px-2">{epi.tags}</p>
+                <p className="w-[7%] px-2">{epi.tagsAdded}</p>
               </div>
             );
           })}

@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { excelProps } from "./type";
+import type { usingDataProps } from "./type";
 import { getExcelData } from "./updateExcel";
 
 function excelDateToJSDate(serial: number): Date {
@@ -26,7 +26,7 @@ export async function getNewEpisodes(token: string, accessToken: string) {
   const totalCount = firstRes.data.data.pageInfo.totalCount;
   const totalPages = Math.ceil(totalCount / size);
 
-  let allApiData: excelProps[] = [...firstRes.data.data.dataList];
+  let allApiData: usingDataProps[] = [...firstRes.data.data.dataList];
 
   for (let page = 2; page <= totalPages; page++) {
     const res = await axios.get(

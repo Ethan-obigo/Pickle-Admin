@@ -1,4 +1,20 @@
 export type ExcelRow = (string | number | null)[];
+
+export interface usingDataProps {
+  episodeId: number;
+  usageYn: string;
+  channelName: string;
+  episodeName: string;
+  dispDtime: string;
+  createdAt: string;
+  likeCnt: number;
+  listenCnt: number;
+  playTime: number;
+  tags: string;
+  tagsAdded: string;
+}
+
+/*
 export interface excelProps {
   audioUrl: string;
   channelId: number;
@@ -25,6 +41,8 @@ export interface excelProps {
   usageYn: string;
   vendorName: string;
 }
+*/
+
 export interface LoginResponseData {
   adminSeq: number;
   email: string;

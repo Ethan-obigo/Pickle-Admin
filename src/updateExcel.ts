@@ -1,11 +1,11 @@
 import axios from "axios";
-import type { excelProps } from "./type";
+import type { usingDataProps } from "./type";
 import formatDateString from "./formatDateString";
 
 const fileId = import.meta.env.VITE_FILE_ID;
 const sheetName = import.meta.env.VITE_WORKSHEET_NAME;
 
-export async function getExcelData(token: string): Promise<excelProps[]> {
+export async function getExcelData(token: string): Promise<usingDataProps[]> {
   try {
     const response = await axios.get(
       `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/usedRange?valuesOnly=true`,
@@ -18,28 +18,15 @@ export async function getExcelData(token: string): Promise<excelProps[]> {
     return dataRows.map((row) => ({
       episodeId: Number(row[0] ?? 0),
       usageYn: String(row[1] ?? ""),
-      channelId:Number(row[2] ?? 0),
-      episodeNumber: Number(row[3] ?? 0),
-      channelName: String(row[4] ?? ""),
-      episodeName: String(row[5] ?? ""),
-      creatorSeq: Number(row[6] ?? 0),
-      createdAt: String(row[7] ?? ""),
-      dispDtime: String(row[8] ?? ""),
-      episodeType: String(row[9] ?? ""),
-      guests: String(row[10] ?? ""),
-      language: String(row[11] ?? ""),
-      lastUpdateDtime: String(row[12] ?? ""),
-      likeCnt: Number(row[13] ?? 0),
-      listenCnt: Number(row[14] ?? 0),
-      modifiedAt: String(row[15] ?? ""),
-      modifierSeq: Number(row[16] ?? 0),
-      playTime: Number(row[17] ?? 0),
-      playlists: String(row[18] ?? ""),
-      tags: String(row[19] ?? ""),
-      tagsAdded: String(row[20] ?? ""),
-      thumbnailUrl: String(row[21] ?? ""),
-      audioUrl: String(row[22] ?? ""),
-      vendorName: String(row[23] ?? ""),
+      channelName: String(row[2] ?? ""),
+      episodeName: String(row[3] ?? ""),
+      dispDtime: String(row[4] ?? ""),
+      createdAt: String(row[5] ?? ""),
+      playTime: Number(row[6] ?? 0),
+      likeCnt: Number(row[7] ?? 0),
+      listenCnt: Number(row[8] ?? 0),
+      tags: String(row[9] ?? ""),
+      tagsAdded: String(row[10] ?? ""),
     }));
   } catch (err) {
     console.error("엑셀 조회 실패:", err);
@@ -47,7 +34,7 @@ export async function getExcelData(token: string): Promise<excelProps[]> {
   }
 }
 
-export async function addMissingRows(allData: excelProps[], token: string) {
+export async function addMissingRows(allData: usingDataProps[], token: string) {
   const existingData = await getExcelData(token);
 
   const missingRows = allData.filter(
@@ -67,33 +54,20 @@ export async function addMissingRows(allData: excelProps[], token: string) {
       const values = batch.map((row) => [
         row.episodeId,
         row.usageYn,
-        row.channelId,
-        row.episodeNumber,
         row.channelName,
         row.episodeName,
-        row.creatorSeq,
-        formatDateString(row.createdAt),
         formatDateString(row.dispDtime),
-        row.episodeType,
-        row.guests,
-        row.language,
-        formatDateString(row.lastUpdateDtime),
+        formatDateString(row.createdAt),
+        row.playTime,
         row.likeCnt,
         row.listenCnt,
-        formatDateString(row.modifiedAt),
-        row.modifierSeq,
-        row.playTime,
-        row.playlists,
         row.tags,
         row.tagsAdded,
-        row.thumbnailUrl,
-        row.audioUrl,
-        row.vendorName,
       ]);
 
       const startRow = existingData.length + i + 3;
       const endRow = startRow + batch.length - 1;
-      const rangeAddress = `A${startRow}:X${endRow}`;
+      const rangeAddress = `A${startRow}:K${endRow}`;
 
       await axios.patch(
         `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/range(address='${rangeAddress}')`,

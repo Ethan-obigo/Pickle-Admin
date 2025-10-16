@@ -1,5 +1,5 @@
 import { getExcelData } from "./updateExcel";
-import type { excelProps } from "./type";
+import type { usingDataProps } from "./type";
 import axios from "axios";
 import { toast } from "react-toastify";
 import formatDateString from "./formatDateString";
@@ -18,7 +18,7 @@ async function clearExcelFromRow(
 ) {
   try {
     await axios.post(
-      `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/range(address='A${startRow}:X${endRow}')/clear`,
+      `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/range(address='A${startRow}:K${endRow}')/clear`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -51,7 +51,7 @@ function excelDateTime(date: string | number) {
   return isNaN(d.getTime()) ? "" : formatDateString(d.toISOString());
 }
 
-async function overwriteExcelData(newEpi: excelProps[], token: string) {
+async function overwriteExcelData(newEpi: usingDataProps[], token: string) {
   const existingData = await getExcelData(token);
   const updatedData = [...newEpi, ...existingData];
 
@@ -64,40 +64,25 @@ async function overwriteExcelData(newEpi: excelProps[], token: string) {
       const values = batch.map((row) => {
         const createdAtStr = excelDateTime(row.createdAt);
         const dispDtimeStr = excelDateTime(row.dispDtime);
-        const lastUpdateDtimeStr = excelDateTime(row.lastUpdateDtime);
-        const modifiedAtStr = excelDateTime(row.modifiedAt);
 
         return [
           row.episodeId,
           row.usageYn,
-          row.channelId,
-          row.episodeNumber,
           row.channelName,
           row.episodeName,
-          row.creatorSeq,
-          createdAtStr,
           dispDtimeStr,
-          row.episodeType,
-          row.guests,
-          row.language,
-          lastUpdateDtimeStr,
+          createdAtStr,
+          row.playTime,
           row.likeCnt,
           row.listenCnt,
-          modifiedAtStr,
-          row.modifierSeq,
-          row.playTime,
-          row.playlists,
           row.tags,
           row.tagsAdded,
-          row.thumbnailUrl,
-          row.audioUrl,
-          row.vendorName,
         ];
       });
 
       const startRow = i + 4;
       const endRow = startRow + batch.length - 1;
-      const rangeAddress = `A${startRow}:X${endRow}`;
+      const rangeAddress = `A${startRow}:K${endRow}`;
 
       await axios.patch(
         `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/range(address='${rangeAddress}')`,
@@ -118,7 +103,7 @@ async function overwriteExcelData(newEpi: excelProps[], token: string) {
   }
 }
 
-async function syncNewEpisodesToExcel(newEpi: excelProps[], token: string) {
+async function syncNewEpisodesToExcel(newEpi: usingDataProps[], token: string) {
   const excelData = await getExcelData(token);
 
   const excelIds = new Set(excelData.map((epi) => epi.episodeId));

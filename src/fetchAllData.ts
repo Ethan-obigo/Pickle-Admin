@@ -1,9 +1,9 @@
 import axios from "axios";
-import type { excelProps } from "./type";
+import type { usingDataProps } from "./type";
 
 const size = 10000;
 
-export async function fetchAllData(accessToken: string): Promise<excelProps[]> {
+export async function fetchAllData(accessToken: string): Promise<usingDataProps[]> {
   try {
     const firstRes = await axios.get(
       `https://pickle.obigo.ai/admin/episode?page=1&size=${size}`,
@@ -15,7 +15,7 @@ export async function fetchAllData(accessToken: string): Promise<excelProps[]> {
     const totalCount = firstRes.data.data.pageInfo.totalCount;
     const totalPages = Math.ceil(totalCount / size);
 
-    let allData: excelProps[] = [...firstRes.data.data.dataList];
+    let allData: usingDataProps[] = [...firstRes.data.data.dataList];
 
     for (let page = 2; page <= totalPages; page++) {
       const res = await axios.get(
