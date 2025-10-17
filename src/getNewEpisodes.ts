@@ -12,7 +12,7 @@ export async function getNewEpisodes(token: string, accessToken: string) {
   const excelData = await getExcelData(token);
   if (excelData.length === 0) return [];
 
-  const latestDateInExcel = excelDateToJSDate(Number(excelData[3].dispDtime));
+  const latestDateInExcel = excelDateToJSDate(Number(excelData[3].createdAt));
   const latestTime = latestDateInExcel.getTime();
 console.log(latestDateInExcel);
   const size = 1000;
@@ -36,14 +36,14 @@ console.log(latestDateInExcel);
       }
     );
     const pageData = res.data.data.dataList;
-    const pageTime = new Date(pageData[0].dispDtime).getTime();
+    const pageTime = new Date(pageData[0].createdAt).getTime();
 
     allApiData = allApiData.concat(pageData);
     if (pageTime <= latestTime) break;
   }
 
   const newEpisodes = allApiData.filter(
-    (item) => new Date(item.dispDtime).getTime() > latestTime
+    (item) => new Date(item.createdAt).getTime() > latestTime
   );
 
   return newEpisodes;
