@@ -40,6 +40,7 @@ console.log(latestDateInExcel);
 
     allApiData = allApiData.concat(pageData);
     if (pageTime <= latestTime) {
+      console.log(pageData[0].episodeName);
       console.log(pageTime, latestTime);
       break;
     }
