@@ -50,5 +50,7 @@ console.log(latestDateInExcel);
     (item) => new Date(item.createdAt).getTime() > latestTime
   );
 
+  console.log(newEpisodes);
+
   return newEpisodes;
 }
