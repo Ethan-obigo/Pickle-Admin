@@ -16,8 +16,8 @@ export async function getExcelData(token: string): Promise<usingDataProps[]> {
     const allRows: (string | number)[][] = [];
 
     for (let i = 0; i < totalBatches; i++) {
-      const startRow = i * batchSize + 1;
-      const endRow = Math.min((i + 1) * batchSize, totalRows);
+      const startRow = i * batchSize + 3;
+      const endRow = startRow + batchSize + 3;
       const rangeAddress = `A${startRow}:K${endRow}`;
 
       const res = await axios.get(
