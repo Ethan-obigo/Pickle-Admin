@@ -9,7 +9,7 @@ export async function getExcelData(token: string): Promise<usingDataProps[]> {
   const headers = { Authorization: `Bearer ${token}` };
 
   try {
-    const totalRows = 50000;
+    const totalRows = 1000;
     const batchSize = 1000;
     const totalBatches = Math.ceil(totalRows / batchSize);
 
