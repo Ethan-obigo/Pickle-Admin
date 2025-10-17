@@ -1,3 +1,5 @@
+import { InteractionRequiredAuthError } from "@azure/msal-browser";
+
 // auth.ts
 export async function getGraphToken(): Promise<string | null> {
   try {
@@ -25,10 +27,21 @@ export async function getGraphToken(): Promise<string | null> {
       account = loginResponse.account;
     }
 
-    const tokenResponse = await msalInstance.acquireTokenSilent({
-      scopes: ["Files.ReadWrite"],
-      account,
-    });
+    let tokenResponse;
+    try {
+      tokenResponse = await msalInstance.acquireTokenSilent({
+        scopes: ["Files.ReadWrite"],
+        account,
+      });
+    } catch (err: unknown) {
+      if (err instanceof InteractionRequiredAuthError) {
+        tokenResponse = await msalInstance.acquireTokenPopup({
+          scopes: ["Files.ReadWrite"],
+        });
+      } else {
+        throw err;
+      }
+    }
 
     localStorage.setItem("loginToken", tokenResponse.accessToken);
 
