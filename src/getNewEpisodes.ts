@@ -15,7 +15,7 @@ console.log(excelData);
   const latestDateInExcel = excelDateToJSDate(Number(excelData[3].createdAt));
   const latestTime = latestDateInExcel.getTime();
 console.log(latestDateInExcel);
-  const size = 1000;
+  const size = 1;
   const firstRes = await axios.get(
     `https://pickle.obigo.ai/admin/episode?page=1&size=${size}`,
     {
@@ -39,7 +39,10 @@ console.log(latestDateInExcel);
     const pageTime = new Date(pageData[0].createdAt).getTime();
 
     allApiData = allApiData.concat(pageData);
-    if (pageTime <= latestTime) break;
+    if (pageTime <= latestTime) {
+      console.log(pageTime);
+      break;
+    }
   }
 
   const newEpisodes = allApiData.filter(
