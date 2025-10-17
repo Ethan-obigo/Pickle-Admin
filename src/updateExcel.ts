@@ -6,16 +6,36 @@ const fileId = import.meta.env.VITE_FILE_ID;
 const sheetName = import.meta.env.VITE_WORKSHEET_NAME;
 
 export async function getExcelData(token: string): Promise<usingDataProps[]> {
+  const headers = { Authorization: `Bearer ${token}` };
+
   try {
-    const response = await axios.get(
-      `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/usedRange?valuesOnly=true`,
-      { headers: { Authorization: `Bearer ${token}` } }
+    const infoRes = await axios.get(
+      `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/usedRange`,
+      { headers }
     );
 
-    const values = response.data.values as (string | number)[][];
-    const dataRows = values.slice(0);
+    const address = infoRes.data.address;
+    const totalRows = Number(address.match(/\d+$/)?.[0] ?? 0);
+    const batchSize = 1000;
+    const totalBatches = Math.ceil(totalRows / batchSize);
 
-    return dataRows.map((row) => ({
+    const allRows: (string | number)[][] = [];
+
+    for (let i = 0; i < totalBatches; i++) {
+      const startRow = i * batchSize + 1;
+      const endRow = Math.min((i + 1) * batchSize, totalRows);
+      const rangeAddress = `A${startRow}:K${endRow}`;
+
+      const res = await axios.get(
+        `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/range(address='${rangeAddress}')?valuesOnly=true`,
+        { headers }
+      );
+
+      const values = res.data.values as (string | number)[][];
+      if (values && values.length > 0) allRows.push(...values);
+    }
+
+    return allRows.map((row) => ({
       episodeId: Number(row[0] ?? 0),
       usageYn: String(row[1] ?? ""),
       channelName: String(row[2] ?? ""),
