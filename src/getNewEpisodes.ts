@@ -14,7 +14,7 @@ export async function getNewEpisodes(token: string, accessToken: string) {
   console.log(excelData);
   const latestDateInExcel = excelDateToJSDate(Number(excelData[3].createdAt));
   const latestTime = latestDateInExcel.getTime();
-  console.log(latestDateInExcel);
+  console.log(latestDateInExcel, latestTime);
   const size = 1;
   const firstRes = await axios.get(
     `https://pickle.obigo.ai/admin/episode?page=1&size=${size}`,
