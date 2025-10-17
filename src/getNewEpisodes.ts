@@ -4,23 +4,32 @@ import { getExcelData } from "./updateExcel";
 
 function parseExcelDate(value: string | number): Date {
   if (typeof value === "number") {
-    const excelEpoch = new Date(Date.UTC(1899, 11, 30, 0, 0, 0)); // UTC 기준
+    // 엑셀 시리얼
+    const excelEpoch = new Date(Date.UTC(1899, 11, 30, 0, 0, 0));
     const millisPerDay = 24 * 60 * 60 * 1000;
     return new Date(excelEpoch.getTime() + value * millisPerDay);
+  } else if (typeof value === "string") {
+    const parsed = new Date(value);
+    if (isNaN(parsed.getTime())) {
+      console.warn("엑셀 날짜 파싱 실패:", value);
+      return new Date(0); // fallback
+    }
+    return parsed;
   } else {
-    return new Date(value);
+    return new Date(0);
   }
 }
 
 export async function getNewEpisodes(token: string, accessToken: string) {
   const excelData = await getExcelData(token);
   if (excelData.length === 0) return [];
-  
-  const latestDateInExcel = parseExcelDate(excelData[excelData.length - 1].createdAt);
+  console.log(excelData);
+  const latestDateInExcel = parseExcelDate(
+    excelData[excelData.length - 1].createdAt
+  );
   const latestTime = latestDateInExcel.getTime();
-  console.log("latestDateInExcel:", latestDateInExcel, latestTime);
   console.log(latestDateInExcel, latestTime);
-  const size = 1;
+  const size = 10000;
   const firstRes = await axios.get(
     `https://pickle.obigo.ai/admin/episode?page=1&size=${size}`,
     {
