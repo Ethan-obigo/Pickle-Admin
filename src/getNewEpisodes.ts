@@ -11,6 +11,7 @@ function excelDateToJSDate(serial: number): Date {
 export async function getNewEpisodes(token: string, accessToken: string) {
   const excelData = await getExcelData(token);
   if (excelData.length === 0) return [];
+  console.log(excelData);
 
   const latestDateInExcel = excelDateToJSDate(Number(excelData[3].createdAt));
   const latestTime = latestDateInExcel.getTime();
