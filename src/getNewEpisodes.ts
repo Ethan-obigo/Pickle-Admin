@@ -11,11 +11,10 @@ function excelDateToJSDate(serial: number): Date {
 export async function getNewEpisodes(token: string, accessToken: string) {
   const excelData = await getExcelData(token);
   if (excelData.length === 0) return [];
-  console.log(excelData);
 
   const latestDateInExcel = excelDateToJSDate(Number(excelData[3].dispDtime));
   const latestTime = latestDateInExcel.getTime();
-console.log("excelTime: ", latestDateInExcel);
+
   const size = 1000;
   const firstRes = await axios.get(
     `https://pickle.obigo.ai/admin/episode?page=1&size=${size}`,
@@ -38,7 +37,7 @@ console.log("excelTime: ", latestDateInExcel);
     );
     const pageData = res.data.data.dataList;
     const pageTime = new Date(pageData[0].dispDtime).getTime();
-console.log(`${page}, pageTime: `, pageData[0].createdAt);
+
     allApiData = allApiData.concat(pageData);
     if (pageTime <= latestTime) break;
   }
