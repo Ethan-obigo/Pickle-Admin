@@ -54,6 +54,7 @@ function App() {
     const result = window.confirm("엑셀 파일에 누락된 데이터를 추가합니다.");
     if (result) {
       const allData = await fetchAllData(accessToken);
+      console.log("showdata: ", allData)
       await addMissingRows(allData, token);
     }
   };
