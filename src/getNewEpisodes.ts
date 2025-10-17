@@ -62,9 +62,11 @@ export async function getNewEpisodes(token: string, accessToken: string) {
     }
   }
 
-  const newEpisodes = allApiData.filter(
-    (item) => new Date(item.createdAt).getTime() > latestTime
-  );
+  const newEpisodes = allApiData.filter((item) => {
+    const dbDateForItem = new Date(item.createdAt);
+    const itemTime = dbDateForItem.getTime() - (dbDateForItem.getTimezoneOffset() * 60 * 1000);
+    return itemTime > latestTime;
+  });
 
   console.log(allApiData);
   console.log(newEpisodes);
