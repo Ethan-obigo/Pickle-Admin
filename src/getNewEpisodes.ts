@@ -38,8 +38,8 @@ console.log("excelTime: ", latestTime);
     const pageData = res.data.data.dataList;
     const pageTime = new Date(pageData[0].createdAt).getTime();
 console.log(`${page}, pageTime: `, pageTime);
-    if (pageTime <= latestTime) break;
     allApiData = allApiData.concat(pageData);
+    if (pageTime <= latestTime) break;
   }
 
   const newEpisodes = allApiData.filter(
