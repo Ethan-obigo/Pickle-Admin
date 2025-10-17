@@ -26,9 +26,9 @@ console.log("excelTime: ", latestTime);
   const totalCount = firstRes.data.data.pageInfo.totalCount;
   const totalPages = Math.ceil(totalCount / size);
 
-  let allApiData: usingDataProps[] = [...firstRes.data.data.dataList];
+  let allApiData: usingDataProps[] = [];
 
-  for (let page = 2; page <= totalPages; page++) {
+  for (let page = 1; page <= totalPages; page++) {
     const res = await axios.get(
       `https://pickle.obigo.ai/admin/episode?page=${page}&size=${size}`,
       {
