@@ -9,13 +9,7 @@ export async function getExcelData(token: string): Promise<usingDataProps[]> {
   const headers = { Authorization: `Bearer ${token}` };
 
   try {
-    const infoRes = await axios.get(
-      `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/usedRange(addressOnly=true)`,
-      { headers }
-    );
-
-    const address = infoRes.data.address;
-    const totalRows = Number(address.match(/\d+$/)?.[0] ?? 0);
+    const totalRows = 50000;
     const batchSize = 1000;
     const totalBatches = Math.ceil(totalRows / batchSize);
 
