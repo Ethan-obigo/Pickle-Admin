@@ -14,6 +14,7 @@ export async function getNewEpisodes(token: string, accessToken: string) {
 
   const latestDateInExcel = excelDateToJSDate(Number(excelData[0].createdAt));
   const latestTime = latestDateInExcel.getTime();
+  console.log(latestDateInExcel, latestTime);
 
   const size = 1000;
   const firstRes = await axios.get(
@@ -38,6 +39,7 @@ export async function getNewEpisodes(token: string, accessToken: string) {
     const pageData = res.data.data.dataList;
     const pageTime = new Date(pageData[0].createdAt).getTime();
 
+  console.log("pageTime: ", pageTime);
     if (pageTime <= latestTime) break;
     allApiData = allApiData.concat(pageData);
   }
