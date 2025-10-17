@@ -79,7 +79,7 @@ export async function addMissingRows(allData: usingDataProps[], token: string) {
         row.tagsAdded,
       ]);
 
-      const startRow = existingData.length + i + 3;
+      const startRow = existingData.length + i + 4;
       const endRow = startRow + batch.length - 1;
       const rangeAddress = `A${startRow}:K${endRow}`;
 
