@@ -1,6 +1,7 @@
 import axios from "axios";
 import type { usingDataProps } from "./type";
 import formatDateString from "./formatDateString";
+import { getGraphToken } from "./auth";
 
 const fileId = import.meta.env.VITE_FILE_ID;
 const sheetName = import.meta.env.VITE_WORKSHEET_NAME;
@@ -62,39 +63,48 @@ export async function addMissingRows(allData: usingDataProps[], token: string) {
 
   const batchSize = 1000;
 
-  try {
-    for (let i = 0; i < missingRows.length; i += batchSize) {
-      const batch = missingRows.slice(i, i + batchSize);
-      const values = batch.map((row) => [
-        row.episodeId,
-        row.usageYn,
-        row.channelName,
-        row.episodeName,
-        formatDateString(row.dispDtime),
-        formatDateString(row.createdAt),
-        row.playTime,
-        row.likeCnt,
-        row.listenCnt,
-        row.tags,
-        row.tagsAdded,
-      ]);
+  for (let i = 0; i < missingRows.length; i += batchSize) {
+  const batch = missingRows.slice(i, i + batchSize);
+  const values = batch.map((row) => [
+    row.episodeId,
+    row.usageYn,
+    row.channelName,
+    row.episodeName,
+    formatDateString(row.dispDtime),
+    formatDateString(row.createdAt),
+    row.playTime,
+    row.likeCnt,
+    row.listenCnt,
+    row.tags,
+    row.tagsAdded,
+  ]);
 
-      const startRow = existingData.length + i + 4;
-      const endRow = startRow + batch.length - 1;
-      const rangeAddress = `A${startRow}:K${endRow}`;
+  const startRow = existingData.length + i + 4;
+  const endRow = startRow + batch.length - 1;
+  const rangeAddress = `A${startRow}:K${endRow}`;
+
+  try {
+    await axios.patch(
+      `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/range(address='${rangeAddress}')`,
+      { values },
+      { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
+    );
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err) && err.response?.status === 401) {
+      const refreshedToken = await getGraphToken();
+      if (!refreshedToken) throw new Error("토큰 재발급 실패, 엑셀 업데이트 중단");
+
+      token = refreshedToken;
 
       await axios.patch(
         `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/range(address='${rangeAddress}')`,
         { values },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
+        { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } }
       );
+    } else {
+      throw err;
     }
-  } catch (err) {
-    console.error("엑셀 업데이트 실패:", err);
   }
+}
+
 }
