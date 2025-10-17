@@ -51,7 +51,8 @@ export async function getNewEpisodes(token: string, accessToken: string) {
       }
     );
     const pageData = res.data.data.dataList;
-    const pageTime = new Date(pageData[0].createdAt).getTime();
+    const dbDate = new Date(pageData[0].createdAt);
+    const pageTime = dbDate.getTime() - (dbDate.getTimezoneOffset() * 60 * 1000);
 
     allApiData = allApiData.concat(pageData);
     if (pageTime <= latestTime) {
