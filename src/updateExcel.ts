@@ -44,19 +44,21 @@ export async function getExcelData(token: string): Promise<usingDataProps[]> {
     }
   }
 
-  return allRows.map((row) => ({
-    episodeId: Number(row[0] ?? 0),
-    usageYn: String(row[1] ?? ""),
-    channelName: String(row[2] ?? ""),
-    episodeName: String(row[3] ?? ""),
-    dispDtime: String(row[4] ?? ""),
-    createdAt: String(row[5] ?? ""),
-    playTime: Number(row[6] ?? 0),
-    likeCnt: Number(row[7] ?? 0),
-    listenCnt: Number(row[8] ?? 0),
-    tags: String(row[9] ?? ""),
-    tagsAdded: String(row[10] ?? ""),
-  }));
+  return allRows
+    .filter((row) => row[0] !== null && row[0] !== undefined && row[0] !== "")
+    .map((row) => ({
+      episodeId: Number(row[0] ?? 0),
+      usageYn: String(row[1] ?? ""),
+      channelName: String(row[2] ?? ""),
+      episodeName: String(row[3] ?? ""),
+      dispDtime: String(row[4] ?? ""),
+      createdAt: String(row[5] ?? ""),
+      playTime: Number(row[6] ?? 0),
+      likeCnt: Number(row[7] ?? 0),
+      listenCnt: Number(row[8] ?? 0),
+      tags: String(row[9] ?? ""),
+      tagsAdded: String(row[10] ?? ""),
+    }));
 }
 
 export async function addMissingRows(allData: usingDataProps[], token: string) {
