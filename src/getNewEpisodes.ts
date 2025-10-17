@@ -11,13 +11,12 @@ function excelDateToJSDate(serial: number): Date {
 function findLatestTimeInExcel(excelData: usingDataProps[]): number {
   if (excelData.length === 0) return 0;
 
-  // excelData[3]만 사용하는 대신, 전체를 순회하여 가장 큰 createdAt(시리얼) 값을 찾음
   const latestSerial = excelData.reduce((max, item) => {
     const currentSerial = Number(item.createdAt);
     return currentSerial > max ? currentSerial : max;
-  }, 0); // 0부터 시작 가정
+  }, 0);
 
-  if (latestSerial === 0) return 0; // 데이터가 0인 경우
+  if (latestSerial === 0) return 0;
 
   const latestDateInExcel = excelDateToJSDate(latestSerial);
   return latestDateInExcel.getTime();
