@@ -8,7 +8,7 @@ function excelDateToJSDate(serial: number): Date {
   return new Date(excelEpoch.getTime() + serial * millisPerDay);
 }
 
-function findLatestTimeInExcel(excelData: any[]): number {
+function findLatestTimeInExcel(excelData: usingDataProps[]): number {
   if (excelData.length === 0) return 0;
 
   // excelData[3]만 사용하는 대신, 전체를 순회하여 가장 큰 createdAt(시리얼) 값을 찾음
