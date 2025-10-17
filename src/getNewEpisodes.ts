@@ -13,7 +13,7 @@ export async function getNewEpisodes(token: string, accessToken: string) {
   if (excelData.length === 0) return [];
   console.log(excelData);
 
-  const latestDateInExcel = excelDateToJSDate(Number(excelData[3].createdAt));
+  const latestDateInExcel = excelDateToJSDate(Number(excelData[3].dispDtime));
   const latestTime = latestDateInExcel.getTime();
 console.log("excelTime: ", latestDateInExcel);
   const size = 1000;
@@ -37,14 +37,14 @@ console.log("excelTime: ", latestDateInExcel);
       }
     );
     const pageData = res.data.data.dataList;
-    const pageTime = new Date(pageData[0].createdAt).getTime();
+    const pageTime = new Date(pageData[0].dispDtime).getTime();
 console.log(`${page}, pageTime: `, pageData[0].createdAt);
     allApiData = allApiData.concat(pageData);
     if (pageTime <= latestTime) break;
   }
 
   const newEpisodes = allApiData.filter(
-    (item) => new Date(item.createdAt).getTime() > latestTime
+    (item) => new Date(item.dispDtime).getTime() > latestTime
   );
 
   return newEpisodes;
