@@ -15,14 +15,22 @@ export async function getGraphToken(): Promise<string | null> {
     ).PublicClientApplication(msalConfig);
     await msalInstance.initialize();
 
-    const loginResponse = await msalInstance.loginPopup({
-      scopes: ["Files.ReadWrite"],
-    });
+    const accounts = msalInstance.getAllAccounts();
+    let account = accounts[0];
+
+    if (!account) {
+      const loginResponse = await msalInstance.loginPopup({
+        scopes: ["Files.ReadWrite"],
+      });
+      account = loginResponse.account;
+    }
 
     const tokenResponse = await msalInstance.acquireTokenSilent({
       scopes: ["Files.ReadWrite"],
-      account: loginResponse.account,
+      account,
     });
+
+    localStorage.setItem("loginToken", tokenResponse.accessToken);
 
     return tokenResponse.accessToken;
   } catch (err) {
