@@ -14,7 +14,7 @@ export async function getNewEpisodes(token: string, accessToken: string) {
 
   const latestDateInExcel = excelDateToJSDate(Number(excelData[0].createdAt));
   const latestTime = latestDateInExcel.getTime();
-  console.log(latestDateInExcel, latestTime);
+  console.log(latestDateInExcel, latestTime, excelData[0].createdAt);
 
   const size = 1000;
   const firstRes = await axios.get(
