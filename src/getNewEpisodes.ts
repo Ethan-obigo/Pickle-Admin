@@ -2,34 +2,34 @@ import axios from "axios";
 import type { usingDataProps } from "./type";
 import { getExcelData } from "./updateExcel";
 
-function parseExcelDate(value: string | number): Date {
-  if (typeof value === "number") {
-    // 엑셀 시리얼
-    const excelEpoch = new Date(Date.UTC(1899, 11, 30, 0, 0, 0));
-    const millisPerDay = 24 * 60 * 60 * 1000;
-    return new Date(excelEpoch.getTime() + value * millisPerDay);
-  } else if (typeof value === "string") {
-    const parsed = new Date(value);
-    if (isNaN(parsed.getTime())) {
-      console.warn("엑셀 날짜 파싱 실패:", value);
-      return new Date(0); // fallback
-    }
-    return parsed;
-  } else {
-    return new Date(0);
-  }
+function excelDateToJSDate(serial: number): Date {
+  const excelEpoch = new Date(1899, 11, 30);
+  const millisPerDay = 24 * 60 * 60 * 1000;
+  return new Date(excelEpoch.getTime() + serial * millisPerDay);
+}
+
+function findLatestTimeInExcel(excelData: any[]): number {
+  if (excelData.length === 0) return 0;
+
+  // excelData[3]만 사용하는 대신, 전체를 순회하여 가장 큰 createdAt(시리얼) 값을 찾음
+  const latestSerial = excelData.reduce((max, item) => {
+    const currentSerial = Number(item.createdAt);
+    return currentSerial > max ? currentSerial : max;
+  }, 0); // 0부터 시작 가정
+
+  if (latestSerial === 0) return 0; // 데이터가 0인 경우
+
+  const latestDateInExcel = excelDateToJSDate(latestSerial);
+  return latestDateInExcel.getTime();
 }
 
 export async function getNewEpisodes(token: string, accessToken: string) {
   const excelData = await getExcelData(token);
   if (excelData.length === 0) return [];
   console.log(excelData);
-  const latestDateInExcel = parseExcelDate(
-    excelData[excelData.length - 1].createdAt
-  );
-  const latestTime = latestDateInExcel.getTime();
-  console.log(latestDateInExcel, latestTime);
-  const size = 10000;
+  const latestTime = findLatestTimeInExcel(excelData);
+  console.log(latestTime);
+  const size = 1000;
   const firstRes = await axios.get(
     `https://pickle.obigo.ai/admin/episode?page=1&size=${size}`,
     {
