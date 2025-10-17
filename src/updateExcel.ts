@@ -10,7 +10,7 @@ export async function getExcelData(token: string): Promise<usingDataProps[]> {
 
   try {
     const infoRes = await axios.get(
-      `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/usedRange`,
+      `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/worksheets('${sheetName}')/usedRange(addressOnly=true)`,
       { headers }
     );
 
