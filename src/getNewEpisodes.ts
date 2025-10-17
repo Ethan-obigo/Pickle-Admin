@@ -3,9 +3,11 @@ import type { usingDataProps } from "./type";
 import { getExcelData } from "./updateExcel";
 
 function excelDateToJSDate(serial: number): Date {
-  const excelEpoch = new Date(1899, 11, 30);
   const millisPerDay = 24 * 60 * 60 * 1000;
-  return new Date(excelEpoch.getTime() + serial * millisPerDay);
+  const excelEpochMillis = Date.UTC(1899, 11, 30); 
+  const targetMillis = excelEpochMillis + serial * millisPerDay;
+
+  return new Date(targetMillis);
 }
 
 function findLatestTimeInExcel(excelData: usingDataProps[]): number {
@@ -25,7 +27,7 @@ function findLatestTimeInExcel(excelData: usingDataProps[]): number {
 export async function getNewEpisodes(token: string, accessToken: string) {
   const excelData = await getExcelData(token);
   if (excelData.length === 0) return [];
-  console.log(excelData);
+
   const latestTime = findLatestTimeInExcel(excelData);
   console.log(latestTime);
   const size = 1000;
