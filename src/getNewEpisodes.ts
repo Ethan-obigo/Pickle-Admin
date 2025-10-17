@@ -2,18 +2,23 @@ import axios from "axios";
 import type { usingDataProps } from "./type";
 import { getExcelData } from "./updateExcel";
 
-function excelDateToJSDate(serial: number): Date {
-  const excelEpoch = new Date(1899, 11, 30);
-  const millisPerDay = 24 * 60 * 60 * 1000;
-  return new Date(excelEpoch.getTime() + serial * millisPerDay);
+function parseExcelDate(value: string | number): Date {
+  if (typeof value === "number") {
+    const excelEpoch = new Date(Date.UTC(1899, 11, 30, 0, 0, 0)); // UTC 기준
+    const millisPerDay = 24 * 60 * 60 * 1000;
+    return new Date(excelEpoch.getTime() + value * millisPerDay);
+  } else {
+    return new Date(value);
+  }
 }
 
 export async function getNewEpisodes(token: string, accessToken: string) {
   const excelData = await getExcelData(token);
   if (excelData.length === 0) return [];
-  console.log(excelData);
-  const latestDateInExcel = excelDateToJSDate(Number(excelData[3].createdAt));
+  
+  const latestDateInExcel = parseExcelDate(excelData[excelData.length - 1].createdAt);
   const latestTime = latestDateInExcel.getTime();
+  console.log("latestDateInExcel:", latestDateInExcel, latestTime);
   console.log(latestDateInExcel, latestTime);
   const size = 1;
   const firstRes = await axios.get(
