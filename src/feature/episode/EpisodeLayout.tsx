@@ -5,11 +5,12 @@ import { addMissingRows } from '../../utils/updateExcel';
 import { getNewDataWithExcel } from '../../utils/getNewData';
 import type { usingDataProps } from '../../type';
 import EpisodeList from './EpisodeList';
-import syncNewDataToExcel from '../../utils/syncNewEpisodesToExcel';
+import syncNewDataToExcel, { syncNewDatatoExcel3 } from '../../utils/syncNewEpisodesToExcel';
 import Button from '../../components/Button';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import getSheetList from '../../utils/getSheetList';
 import { useLoginTokenStore } from '../../store/useLoginTokenStore';
+import getTableList from '../../utils/getTableList';
 
 const CATEGORY = 'episode';
 
@@ -26,6 +27,10 @@ const EpisodeLayout = () => {
   const [selectedSheet, setSelectedSheet] = useState(
     localStorage.getItem('sheetName') || ''
   );
+  const [selectedTable, setSelectedTable] = useState('');
+  const [tableList, setTableList] = useState<{ id: string; name: string }[]>(
+    []
+  );
 
   useEffect(() => {
     if (loginToken) {
@@ -33,10 +38,26 @@ const EpisodeLayout = () => {
     }
   }, [loginToken]);
 
+  useEffect(() => {
+    if (loginToken && selectedSheet) {
+      const fileId = import.meta.env.VITE_FILE_ID;
+      getTableList(loginToken, fileId, selectedSheet).then(setTableList);
+    } else {
+      setTableList([]);
+      setSelectedTable('');
+    }
+  }, [loginToken, selectedSheet]);
+
   const handleSelectSheet = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setSelectedSheet(value);
     localStorage.setItem('sheetName', value);
+  };
+
+  const handleSelectTable = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setSelectedTable(value);
+    localStorage.setItem('tableName', value);
   };
 
   const handleUpdateExcel = async () => {
@@ -54,9 +75,10 @@ const EpisodeLayout = () => {
   };
 
   const handleSyncExcel = async () => {
+    if (!selectedTable) return toast.warn('테이블을 선택해주세요!');
     if (!loginToken) return toast.warn('로그인을 먼저 해주세요!');
     setExcelLoading(true);
-    await syncNewDataToExcel(newEpi, loginToken, setProgress, CATEGORY);
+    await syncNewDatatoExcel3(newEpi, loginToken, selectedTable);
     setProgress('');
     setExcelLoading(false);
   };
@@ -99,6 +121,12 @@ const EpisodeLayout = () => {
               vertical={false}
               loading={excelLoading}
             />
+            <button
+              onClick={() => handleSearchNew()}
+              className='cursor-pointer flex gap-2'
+            >
+              <img src='/redo.svg' alt='재검색' width={18} height={18} /> 재검색
+            </button>
             <select
               value={selectedSheet}
               onChange={handleSelectSheet}
@@ -111,13 +139,26 @@ const EpisodeLayout = () => {
                 </option>
               ))}
             </select>
-            <button
-              onClick={() => handleSearchNew()}
-              className='cursor-pointer'
+            <select
+              value={selectedTable}
+              onChange={handleSelectTable}
+              className='w-fit appearance-none border border-gray-300 px-4 py-2 pr-10 rounded-lg bg-white text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition cursor-pointer'
+              disabled={!tableList.length}
             >
-              <img src='/redo.svg' alt='재검색' width={22} height={22} />
-            </button>
-            <Button onClick={handleSyncExcel}>Excel 동기화</Button>
+              <option value=''>
+                {tableList.length > 0 ? '테이블 선택' : '테이블 없음'}
+              </option>
+              {tableList.map((table) => (
+                <option key={table.id} value={table.name} >
+                  {table.name}
+                </option>
+              ))}
+            </select>
+            <Button 
+              onClick={handleSyncExcel}
+            >
+              Excel 동기화
+            </Button>
           </div>
         </div>
         <div className='w-full h-[90%] flex flex-col'>

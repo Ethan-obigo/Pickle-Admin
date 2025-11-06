@@ -188,3 +188,52 @@ async function syncNewDataToExcel(
 }
 
 export default syncNewDataToExcel;
+
+export async function syncNewDatatoExcel3(
+  newData: usingDataProps[],
+  token: string,
+  tableName: string
+) {
+  let values = newData.map((row) => {
+    const createdAtStr = excelDateTime(row.createdAt);
+    const dispDtimeStr = excelDateTime(row.dispDtime);
+
+    return [
+      row.episodeId,
+      row.usageYn,
+      row.channelName,
+      row.episodeName,
+      dispDtimeStr,
+      createdAtStr,
+      row.playTime,
+      row.likeCnt,
+      row.listenCnt,
+      row.tags,
+      row.tagsAdded,
+      '',
+    ];
+  });
+  
+  const body = {
+    values: values,
+    index: 0,
+  };
+
+  try {
+    await axios.post(
+      `https://graph.microsoft.com/v1.0/me/drive/items/${fileId}/workbook/tables/${tableName}/rows`,
+      body,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    toast.success('엑셀 동기화에 성공했습니다!');
+  } catch (err) {
+    console.error('엑셀 동기화 실패:', err);
+    toast.error('엑셀 동기화에 실패했습니다.');
+  }
+}
