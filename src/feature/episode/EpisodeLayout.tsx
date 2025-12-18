@@ -158,7 +158,7 @@ const EpisodeLayout = () => {
         </div>
         <div className='w-full h-[90%] gap-4 flex flex-col'>
           <div className='min-w-max flex font-bold py-5'>
-            <p className='w-[7%] px-2'>ID</p>
+            <p className='w-[7%] px-2'>에피소드ID</p>
             <p className='w-[7%] px-2'>활성화</p>
             <p className='w-[12%] px-2'>채널명</p>
             <p className='w-[13%] px-2'>에피소드명</p>
@@ -169,6 +169,7 @@ const EpisodeLayout = () => {
             <p className='w-[7%] px-2'>청취수</p>
             <p className='w-[7%] px-2'>썸네일URL</p>
             <p className='w-[7%] px-2'>오디오URL</p>
+            <p className='w-[7%] px-2'>채널ID</p>
           </div>
           <LoadingOverlay progress={progress} loading={loading}>
             새로운 에피소드 목록을 불러오는 중입니다.

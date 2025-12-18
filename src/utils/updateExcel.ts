@@ -71,7 +71,7 @@ export async function getExcelData(
     }
 
     const sheets = getSheetsClient();
-    const lastColumn = category === 'episode' ? 'L' : 'M';
+    const lastColumn = category === 'episode' ? 'M' : 'M';
     const range = `${targetSheet}!B${STARTROW}:${lastColumn}${totalRows}`;
 
     const response = await sheets.spreadsheets.values.get({
@@ -97,6 +97,7 @@ export async function getExcelData(
             listenCnt: Number(row[8] ?? 0),
             thumbnailUrl: String(row[9] ?? ''),
             audioUrl: String(row[10] ?? ''),
+            channelId: Number(row[11] ?? 0),
           }) as usingDataProps
       );
     } else {
@@ -140,7 +141,7 @@ export async function getExcelLastData() {
 
     const sheetName = localStorage.getItem('sheetName') || 'Sheet1';
     const sheets = getSheetsClient();
-    const LASTCOLUMN = 'L';
+    const LASTCOLUMN = 'M';
     const range = `${sheetName}!B${STARTROW}:${LASTCOLUMN}${STARTROW}`;
 
     const response = await sheets.spreadsheets.values.get({
@@ -165,6 +166,7 @@ export async function getExcelLastData() {
           listenCnt: Number(row[8] ?? 0),
           thumbnailUrl: String(row[9] ?? ''),
           audioUrl: String(row[10] ?? ''),
+          channelId: Number(row[11] ?? 0),
         }) as usingDataProps
     );
   } catch (err) {
@@ -254,8 +256,9 @@ export async function addMissingRows(
           row.listenCnt,
           row.thumbnailUrl,
           row.audioUrl,
+          row.channelId,
         ]);
-        lastColumn = 'L';
+        lastColumn = 'M';
       } else {
         values = (batch as usingChannelProps[]).map((row, index) => {
           // 첫 번째 행의 dispDtime 확인 (디버깅용)
@@ -346,8 +349,9 @@ export async function overwriteExcelData(
         row.listenCnt,
         row.thumbnailUrl,
         row.audioUrl,
+        row.channelId,
       ]);
-      lastColumn = 'L';
+      lastColumn = 'M';
     } else {
       values = (data as usingChannelProps[]).map((row) => [
         row.channelId,

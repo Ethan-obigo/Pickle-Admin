@@ -18,8 +18,8 @@ async function clearExcelFromRow(
   category: 'episode' | 'channel',
   sheetName: string
 ) {
-  let lastLine = 'K';
-  if (category === 'episode') lastLine = 'L';
+  let lastLine = 'M';
+  if (category === 'episode') lastLine = 'M';
 
   try {
     const sheets = getSheetsClient();
@@ -118,11 +118,12 @@ async function overwriteExcelData(
             row.listenCnt,
             row.thumbnailUrl,
             row.audioUrl,
+            row.channelId,
           ];
         });
         const startRow = i + STARTROW;
         const endRow = startRow + batch.length - 1;
-        range = `${sheetName}!B${startRow}:L${endRow}`;
+        range = `${sheetName}!B${startRow}:M${endRow}`;
       } else {
         values = (batch as usingChannelProps[]).map((row) => {
           const createdAtStr = excelDateTime(row.createdAt);

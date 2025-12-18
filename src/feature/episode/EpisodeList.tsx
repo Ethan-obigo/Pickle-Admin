@@ -52,6 +52,7 @@ const EpisodeList = ({ data }: { data: usingDataProps[] }) => {
                 <p className='w-[7%] px-2'>{epi.listenCnt}</p>
                 <p className='w-[7%] px-2'>{epi.thumbnailUrl}</p>
                 <p className='w-[7%] px-2'>{epi.audioUrl}</p>
+                <p className='w-[7%] px-2'>{epi.channelId}</p>
               </div>
             );
           })}

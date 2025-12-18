@@ -12,6 +12,7 @@ export interface usingDataProps {
   playTime: number;
   thumbnailUrl: string;
   audioUrl: string;
+  channelId: number;
 }
 
 export interface usingChannelProps {
